@@ -1,0 +1,59 @@
+{
+    "name": "theapp-frontend",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "@tanstack/react-table": "^8.19.2",
+        "@testing-library/jest-dom": "^5.17.0",
+        "@testing-library/react": "^13.4.0",
+        "@testing-library/user-event": "^13.5.0",
+        "axios": "^1.7.2",
+        "date-fns": "^3.6.0",
+        "lodash.debounce": "^4.0.8",
+        "react": "^18.3.1",
+        "react-beautiful-dnd": "^13.1.1",
+        "react-datepicker": "^7.2.0",
+        "react-dom": "^18.3.1",
+        "react-error-boundary": "^4.0.13",
+        "react-icons": "^5.2.1",
+        "react-router-dom": "^6.24.1",
+        "react-scripts": "5.0.1",
+        "react-table": "^7.8.0",
+        "routes": "^2.1.0",
+        "styled-components": "^6.1.11",
+        "web-vitals": "^2.1.4"
+    },
+    "scripts": {
+        "dev": "react-scripts start",
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ],
+        "plugins": [
+            "react-hooks"
+        ],
+        "rules": {
+            "react-hooks/rules-of-hooks": "error",
+            "react-hooks/exhaustive-deps": "warn"
+        }
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "proxy": "http://localhost:5000"
+}

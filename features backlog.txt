@@ -1,0 +1,78 @@
+The bottons on the Wholesale Customers Details page loses the styling once I resize the screen.
+It does work on the other feature though.
+
+In the Wholesale Customers Details now I have the same issue I had before with the ID column
+in the Wholesale Customers Prices feature page. When I use Column Selector to show the columns,
+they are added to the right end of the table, rather than in their respective place.
+
+I need a "Edit" button in the Funtionality Bar in the Wholesale Customers Details page which
+brings up the same form as the Create Customer, but this time it's prefilled with the current
+data in all the fields and the user can just change those details and save the edit by clicking
+"Save Customer Details" button. The new data is then overwrites the previous data.
+OOOOOOORRRRRR
+I can actually allow user to edit the fields in-line, just like I have in the
+Wholesale Customers Prices feature page.
+
+I need pagination
+
+I need to freeze the table header row and maybe the Business name column.
+
+
+
+
+
+Second part of this task is the prices.
+So, I need to break this down into a few smaller steps:
+ 1. I need to adjust the Create new customer form to include a new field - a checkbox saying
+ "Custom Pricing?".
+    a) If the checkbox is ticked, then a new "area" appears just below (slightly
+    darker colour background) with a nested dropdown interface:
+    - First dropdown: Select coffee
+    - Second dropdwon: Select bag size
+    Then there should be a field where the user should input the price (field label: "Custom Price").
+    Then there should be a button "+" which allows to add one more area with the nested dropdowns
+    and field for custom price - in case I want to give this customer custom prices for more than
+    one coffee.
+    Also, when hitting the "Create Customer" button and writing their data in both - Wholesale Customers Details and Wholesale Customers Prices sheets,
+    the custom price becomes "locked" meaning, the checkbox to the left of the Product and BagSize column must be ticked in the Wholesale Customers Prices sheet.
+    In this way, whenever I change the List Price for that particular product, the ticked checkbox ensures that the custom prices next to that checkbox cannot be
+    overwritten by the action of appending customer prices (as they are created/edited in the "Prices" sheet)
+
+    b) if the checkbox is left unticked, that means the prices are List Prices and can be overwritten by the action of appending customer prices because they are not "locked".
+
+
+
+
+Password reset and email verification features
+
+For the password reset and email verification features to work I need to set necessary email configurations in .env file:
+EMAIL_HOST: This is the hostname of the email server you'll use to send emails (e.g., smtp.gmail.com for Gmail).
+EMAIL_PORT: The port number used by the email server (e.g., 587 for TLS or 465 for SSL).
+EMAIL_USER: The username or email address used to authenticate with the email server.
+EMAIL_PASS: The password for the email account or an app-specific password.
+EMAIL_FROM: The email address that will appear as the sender of the emails.
+
+Single_Sign-On (SSO)
+
+I need to set up a single sign on feature. But need to chose the email service provider first (Gmail, SendGrid, Mailgun, Amazon SES) and then set up everything. 
+Read a bit about SSO here: https://help.mailgun.com/hc/en-us/articles/1260801912270-SAML-SSO
+For production use, consider using a transactional email service like SendGrid or Mailgun, which are designed for sending automated emails from web applications.
+
+Multi-factor authentication (MFA)
+
+
+
+DEPLOYEMENT QUESTIONS
+
+1) NODE_ENV=development vs production (in backend\middleware\errorMiddleware.js and elsewhere)
+2) localhost???
+3) Google Cloud / App Engine: Your app.yaml file for Google App Engine deployment
+
+
+OTHER QUESTIONS
+
+Given all this development we've made here how would you describe my appliaction in terms of is it using microservice, or other terms etc.
+
+How does the multi-organisation multi-tenant work. How is in our context the data is separated from organisation to organisation?
+
+Docerisation?

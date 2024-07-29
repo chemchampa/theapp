@@ -1,0 +1,24 @@
+{
+    "name": "theapp",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+        "start:backend": "cd backend && cross-env GOOGLE_APPLICATION_CREDENTIALS=../service-account-key.json node app.js",
+        "start:frontend": "cd frontend && npm start",
+        "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run start:backend\" \"npm run start:frontend\"",
+        "install": "concurrently \"cd frontend && npm install\" \"cd backend && npm install\"",
+        "test": "concurrently \"cd frontend && npm test\" \"cd backend && npm test\""
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "cross-env": "^7.0.3"
+    },
+    "devDependencies": {
+        "concurrently": "^8.2.2"
+    },
+    "description": "Multi-feature application for wholesale order management"
+}
