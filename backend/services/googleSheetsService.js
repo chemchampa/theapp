@@ -1071,9 +1071,9 @@ exports.getPricesCalculatorData = async (tenantId, organizationId) => {
         markupMultiplier1kg: row[11],
         retail1kgPrice: row[12],
         costPlusPricing: row[13],
-        controller: row[14],
-        markupMultiplierWholesale200g: row[15],
-        wholesale200gPrice: row[16],
+        markupMultiplierWholesale200g: row[14],
+        wholesale200gPrice: row[15],
+        controller: row[16],
         wholesale1kgPrice: row[17],
         wholesaleTier1: row[18],
         wholesaleTier2: row[19],
@@ -1140,9 +1140,9 @@ async function updateProductInPricesCalculator(tenantId, organizationId, id, upd
       updatedData.markupMultiplier1kg,
       updatedData.retail1kgPrice,
       updatedData.costPlusPricing,
-      updatedData.controller,
       updatedData.markupMultiplierWholesale200g,
       updatedData.wholesale200gPrice,
+      updatedData.controller,
       updatedData.wholesale1kgPrice,
       updatedData.wholesaleTier1,
       updatedData.wholesaleTier2,
@@ -1193,7 +1193,7 @@ async function deleteProductsFromPricesCalculator(tenantId, organizationId, ids)
     // Get all data from the sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'Prices Calculator!A:U',
+      range: 'Prices Calculator!A:W',
     });
     const rows = response.data.values;
     // After fetching the rows

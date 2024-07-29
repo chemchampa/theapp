@@ -93,6 +93,9 @@ const PricesCalculator = () => {
         </StyledSelect>
       )
     },
+    
+    { key: 'markupMultiplierWholesale200g', label: 'Markup Multiplier for 200g Wholesale', editable: true },
+    { key: 'wholesale200gPrice', label: 'Wholesale 200g price', editable: true },
     {
       key: 'controller',
       label: 'Controller',
@@ -107,15 +110,19 @@ const PricesCalculator = () => {
         );
       }
     },
-    { key: 'markupMultiplierWholesale200g', label: 'Markup Multiplier for 200g Wholesale', editable: true },
-    { key: 'wholesale200gPrice', label: 'Wholesale 200g price', editable: true },
     { key: 'wholesale1kgPrice', label: 'Wholesale 1kg List Price', editable: true },
     { key: 'wholesaleTier1', label: 'Wholesale Price: Tier 1 (75KG+)', editable: true },
     { key: 'wholesaleTier2', label: 'Wholesale Price: Tier 2 (20-75kg)', editable: true },
     { key: 'wholesaleTier3', label: 'Wholesale Price: Tier 3 (1-20kg)', editable: true },
   ];
 
-  const [visibleColumns, setVisibleColumns] = useState(columns.map(col => col.key));
+  // const [visibleColumns, setVisibleColumns] = useState(columns.map(col => col.key));
+  const [visibleColumns, setVisibleColumns] = useState([
+    'coffeeProduct', 'greenCoffeePrice', 'postRoastCost', 'packed1kgCost', 'packed200gCost',
+    'markupMultiplier200g', 'retail200gPrice', 'markupMultiplier1kg', 'retail1kgPrice',
+    'costPlusPricing', 'markupMultiplierWholesale200g', 'wholesale200gPrice',
+    'controller', 'wholesale1kgPrice', 'wholesaleTier1', 'wholesaleTier2', 'wholesaleTier3',
+  ]);
   const [columnWidths, setColumnWidths] = useState({
     'Coffee Product': { width: 200, isResizable: true },
     'Green Coffee Price': { width: 120, isResizable: true },
@@ -131,9 +138,9 @@ const PricesCalculator = () => {
     'Markup Multiplier for 1kg': { width: 80, isResizable: true },
     'Retail 1kg price': { width: 90, isResizable: true },
     'Cost-plus Pricing': { width: 200, isResizable: true },
-    'Controller': { width: 100, isResizable: true },
     'Markup Multiplier for 200g Wholesale': { width: 120, isResizable: true },
     'Wholesale 200g price': { width: 120, isResizable: true },
+    'Controller': { width: 100, isResizable: true },
     'Wholesale 1kg List Price': { width: 120, isResizable: true },
     'Wholesale Price: Tier 1 (75KG+)': { width: 120, isResizable: true },
     'Wholesale Price: Tier 2 (20-75kg)': { width: 120, isResizable: true },
@@ -201,294 +208,7 @@ const PricesCalculator = () => {
     setSelectAll(false);
   };
 
-
-  // const handleCellEdit = async (rowIndex, columnKey, value) => {
-  //   setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
-  //   try {
-  //     const updatedData = [...tableData];
-  //     updatedData[rowIndex][columnKey] = value;
-  
-  //     if (columnKey === 'costPlusPricing') {
-  //       // Set default controller value based on the new pricing method
-  //       let defaultControllerValue;
-  //       switch (value) {
-  //         case 'Fixed Percentage Markup':
-  //         case 'Desired Profit Margin':
-  //           defaultControllerValue = '0.20';
-  //           break;
-  //         case 'Fixed Amount Markup':
-  //           defaultControllerValue = '5';
-  //           break;
-  //         case 'Keystone Pricing (100% Markup)':
-  //           defaultControllerValue = '1';
-  //           break;
-  //         default:
-  //           defaultControllerValue = '';
-  //       }
-  //       updatedData[rowIndex].controller = defaultControllerValue;
-  //     }
-
-  //     // If wholesale1kgPrice or controller is edited, we need to recalculate
-  //     if (columnKey === 'wholesale1kgPrice' || columnKey === 'controller') {
-  //       updatedData[rowIndex].recalculateWholesale = true;
-  //     }
-
-  //     const rowData = updatedData[rowIndex];
-  //     if (!rowData.id) {
-  //       throw new Error('No ID found for row');
-  //     }
-
-  //     // Send the entire updated row to the backend for recalculation
-  //     const response = await updateBackend(rowData);
-      
-  //     // Update the row with the recalculated data from the backend
-  //     if (response && response.data) {
-  //       updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
-  //       setTableData(updatedData); // Update the state with new data
-  //     } else {
-  //       console.warn('No data returned from backend update');
-  //     }
-
-  //   } catch (error) {
-  //     setError(`Failed to update cell: ${error.message}`);
-  //   } finally {
-  //     setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
-  //   }
-  // };
-
-  // v.2 - semi-working version
-  // const handleCellEdit = async (rowIndex, columnKey, value) => {
-  //   setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
-  //   try {
-  //     const updatedData = [...tableData];
-  //     updatedData[rowIndex][columnKey] = value;
-  
-  //     const rowData = { id: updatedData[rowIndex].id };
-  
-  //     // Always include these fields for recalculations
-  //     rowData.packed1kgCost = updatedData[rowIndex].packed1kgCost;
-  //     rowData.costPlusPricing = updatedData[rowIndex].costPlusPricing;
-  
-  //     if (columnKey === 'costPlusPricing') {
-  //       // Set default controller value based on the new pricing method
-  //       let defaultControllerValue;
-  //       switch (value) {
-  //         case 'Fixed Percentage Markup':
-  //         case 'Desired Profit Margin':
-  //           defaultControllerValue = '0.20';
-  //           break;
-  //         case 'Fixed Amount Markup':
-  //           defaultControllerValue = '5';
-  //           break;
-  //         case 'Keystone Pricing (100% Markup)':
-  //           defaultControllerValue = '1';
-  //           break;
-  //         default:
-  //           defaultControllerValue = '';
-  //       }
-  //       updatedData[rowIndex].controller = defaultControllerValue;
-  //       rowData.costPlusPricing = value;
-  //       rowData.controller = defaultControllerValue;
-  //     } else if (columnKey === 'wholesale1kgPrice') {
-  //       updatedData[rowIndex].recalculateWholesale = true;
-  //       rowData.wholesale1kgPrice = value;
-  //       rowData.recalculateWholesale = true;
-  //     } else if (columnKey === 'controller') {
-  //       updatedData[rowIndex].recalculateWholesale = true;
-  //       rowData.controller = value;
-  //       rowData.recalculateWholesale = true;
-  //     } else {
-  //       rowData[columnKey] = value;
-  //     }
-  
-  //     if (!rowData.id) {
-  //       throw new Error('No ID found for row');
-  //     }
-  
-  //     // Send the updated field to the backend for recalculation
-  //     const response = await updateBackend(rowData);
-  
-  //     // Update the row with the recalculated data from the backend
-  //     if (response && response.data) {
-  //       updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
-  //       setTableData(updatedData); // Update the state with new data
-  //     } else {
-  //       console.warn('No data returned from backend update');
-  //     }
-  
-  //   } catch (error) {
-  //     setError(`Failed to update cell: ${error.message}`);
-  //   } finally {
-  //     setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
-  //   }
-  // };
-
-  // v.3
-  // const handleCellEdit = async (rowIndex, columnKey, value) => {
-  //   setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
-  //   try {
-  //     const updatedData = [...tableData];
-  //     const rowData = updatedData[rowIndex];
-  
-  //     rowData[columnKey] = value;
-  
-  //     if (columnKey === 'costPlusPricing') {
-  //       // Set default controller value based on the new pricing method only when costPlusPricing changes
-  //       let defaultControllerValue;
-  //       switch (value) {
-  //         case 'Fixed Percentage Markup':
-  //         case 'Desired Profit Margin':
-  //           defaultControllerValue = '0.20';
-  //           break;
-  //         case 'Fixed Amount Markup':
-  //           defaultControllerValue = '5';
-  //           break;
-  //         case 'Keystone Pricing (100% Markup)':
-  //           defaultControllerValue = '1';
-  //           break;
-  //         default:
-  //           defaultControllerValue = '';
-  //       }
-  //       rowData.controller = defaultControllerValue;
-  //     } else if (columnKey === 'wholesale1kgPrice' || columnKey === 'controller') {
-  //       // Flag to recalculate wholesale prices
-  //       rowData.recalculateWholesale = true;
-  //     }
-  
-  //     // Always include these fields for recalculations
-  //     rowData.packed1kgCost = updatedData[rowIndex].packed1kgCost;
-  //     rowData.costPlusPricing = updatedData[rowIndex].costPlusPricing;
-  
-  //     if (!rowData.id) {
-  //       throw new Error('No ID found for row');
-  //     }
-  
-  //     // Send the updated field to the backend for recalculation
-  //     const response = await updateBackend(rowData);
-  
-  //     // Update the row with the recalculated data from the backend
-  //     if (response && response.data) {
-  //       updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
-  //       setTableData(updatedData); // Update the state with new data
-  //     } else {
-  //       console.warn('No data returned from backend update');
-  //     }
-  
-  //   } catch (error) {
-  //     setError(`Failed to update cell: ${error.message}`);
-  //   } finally {
-  //     setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
-  //   }
-  // };
-  
-  // v.6 - this is working now althoguh with that intermediate state
-  // const handleCellEdit = async (rowIndex, columnKey, value) => {
-  //   setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
-  //   try {
-  //     const updatedData = [...tableData];
-  //     const rowData = updatedData[rowIndex];
-  
-  //     // Update the specific field with the new value
-  //     rowData[columnKey] = value;
-  
-  //     // Prepare payload for backend based on the changed field
-  //     const payload = { id: rowData.id, [columnKey]: value };
-  
-  //     // Include necessary fields for backend recalculation
-  //     payload.packed1kgCost = rowData.packed1kgCost;
-  //     payload.costPlusPricing = rowData.costPlusPricing;
-  
-  //     // Determine what field was changed and set flags or default values as needed
-  //     if (columnKey === 'costPlusPricing') {
-  //       let defaultControllerValue;
-  //       switch (value) {
-  //         case 'Fixed Percentage Markup':
-  //         case 'Desired Profit Margin':
-  //           defaultControllerValue = '0.20';
-  //           break;
-  //         case 'Fixed Amount Markup':
-  //           defaultControllerValue = '5';
-  //           break;
-  //         case 'Keystone Pricing (100% Markup)':
-  //           defaultControllerValue = '1';
-  //           break;
-  //         default:
-  //           defaultControllerValue = '';
-  //       }
-  //       payload.controller = defaultControllerValue;
-  //     } else if (columnKey === 'wholesale1kgPrice' || columnKey === 'controller') {
-  //       payload.recalculateWholesale = true;
-  //     }
-  
-  //     if (!rowData.id) {
-  //       throw new Error('No ID found for row');
-  //     }
-  
-  //     // Send the updated field to the backend for recalculation
-  //     const response = await updateBackend(payload);
-  
-  //     // Update the row with recalculated data from the backend
-  //     if (response && response.data) {
-  //       updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
-  //       setTableData(updatedData);
-  //     } else {
-  //       console.warn('No data returned from backend update');
-  //     }
-  //   } catch (error) {
-  //     setError(`Failed to update cell: ${error.message}`);
-  //   } finally {
-  //     setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
-  //   }
-  // };
-
-  // v.7 - working
-  // const handleCellEdit = async (rowIndex, columnKey, value) => {
-  //   setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
-  //   const updatedData = [...tableData];
-  //   const rowData = updatedData[rowIndex];
-    
-  //   rowData[columnKey] = value; // Optimistic update for immediate feedback
-  //   setTableData([...updatedData]); 
-
-  //   try {
-  //       const payload = { id: rowData.id, [columnKey]: value, packed1kgCost: rowData.packed1kgCost, costPlusPricing: rowData.costPlusPricing };
-  //       if (columnKey === 'costPlusPricing') {
-  //         let defaultControllerValue;
-  //         switch (value) {
-  //           case 'Fixed Percentage Markup':
-  //           case 'Desired Profit Margin':
-  //             defaultControllerValue = '0.20';
-  //             break;
-  //           case 'Fixed Amount Markup':
-  //             defaultControllerValue = '5';
-  //             break;
-  //           case 'Keystone Pricing (100% Markup)':
-  //             defaultControllerValue = '1';
-  //             break;
-  //           default:
-  //             defaultControllerValue = '';
-  //         }
-  //         payload.controller = defaultControllerValue;
-  //       } else if (columnKey === 'wholesale1kgPrice' || columnKey === 'controller') {
-  //           payload.recalculateWholesale = true;
-  //       }
-  //       const response = await updateBackend(payload);
-  //       if (response && response.data) {
-  //           updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
-  //           setTableData(updatedData); 
-  //       }
-  //   } catch (error) {
-  //       console.error(`Failed to update cell: ${error.message}`);
-  //       rowData[columnKey] = tableData[rowIndex][columnKey]; // Revert on error
-  //       setTableData([...updatedData]);
-  //   } finally {
-  //       setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
-  //   }
-  // };
-
-
-
-  // Define the debounced function outside of your component or hook to avoid re-creating it on every render
+  // The debounced function is defined outside of this componentto avoid re-creating it on every render
   const debouncedUpdateBackend = debounce(async (payload, rowIndex, updatedData, setTableData) => {
     try {
         const response = await updateBackend(payload);
@@ -543,10 +263,6 @@ const PricesCalculator = () => {
 
     setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
   };
-
-
-
-
 
   const updateBackend = async (rowData) => {
     try {

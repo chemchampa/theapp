@@ -156,9 +156,9 @@ exports.addProduct = async (req, res) => {
       markupMultiplier1kg.toFixed(2),
       retail1kgPrice.toFixed(2),
       costPlusPricing,
-      controller.toFixed(2),
       markupMultiplierWholesale200g.toFixed(2),
       wholesale200gPrice.toFixed(2),
+      controller.toFixed(2),
       wholesalePrices.wholesale1kgPrice.toFixed(2),
       wholesalePrices.wholesaleTier1.toFixed(2),
       wholesalePrices.wholesaleTier2.toFixed(2),
@@ -188,155 +188,6 @@ exports.getAllProducts = async (req, res) => {
     res.status(500).json({ message: 'Error fetching products', error: error.message });
   }
 };
-  
-// exports.updateProduct = async (req, res) => {
-//   try {
-//     const tenantId = req.tenantId;
-//     const organizationId = req.organizationId;
-//     const { id } = req.params;
-//     const updatedData = req.body;
-
-//     console.log('tenantId:', tenantId, 'organizationId:', organizationId);
-//     console.log('Received update request for ID:', id);
-//     console.log('Updated data:', updatedData);
-
-//     if (!id) {
-//       throw new Error('No ID provided for update');
-//     }
-
-//     // Recalculate wholesale prices if costPlusPricing, controller, or wholesale1kgPrice has changed
-//     if (updatedData.recalculateWholesale || updatedData.costPlusPricing) {
-//       console.log('Recalculating wholesale prices');
-//       console.log('packed1kgCost:', updatedData.packed1kgCost);
-//       console.log('costPlusPricing:', updatedData.costPlusPricing);
-//       console.log('controller:', updatedData.controller);
-//       console.log('wholesale1kgPrice:', updatedData.wholesale1kgPrice);
-
-//       let wholesalePrices;
-//       if (updatedData.recalculateWholesale) {
-//         if (updatedData.wholesale1kgPrice !== undefined) {
-//           // If wholesale1kgPrice was edited, calculate backwards
-//           wholesalePrices = calculateWholesalePricesBackwards(
-//             parseFloat(updatedData.packed1kgCost),
-//             updatedData.costPlusPricing,
-//             parseFloat(updatedData.wholesale1kgPrice)
-//           );
-//           // Update the controller value
-//           updatedData.controller = wholesalePrices.controller.toFixed(4);
-//         } else {
-//           // If controller was edited, calculate forward
-//           wholesalePrices = calculateWholesalePrices(
-//             parseFloat(updatedData.packed1kgCost),
-//             updatedData.costPlusPricing,
-//             updatedData.controller
-//           );
-//         }
-//       } else {
-//         // If only costPlusPricing changed, calculate forward
-//         wholesalePrices = calculateWholesalePrices(
-//           parseFloat(updatedData.packed1kgCost),
-//           updatedData.costPlusPricing,
-//           updatedData.controller
-//         );
-//       }
-
-//       console.log('Calculated wholesale prices:', wholesalePrices);
-
-//       if (wholesalePrices && typeof wholesalePrices.wholesale1kgPrice === 'number') {
-//         updatedData.wholesale1kgPrice = wholesalePrices.wholesale1kgPrice.toFixed(2);
-//         updatedData.wholesaleTier1 = wholesalePrices.wholesaleTier1.toFixed(2);
-//         updatedData.wholesaleTier2 = wholesalePrices.wholesaleTier2.toFixed(2);
-//         updatedData.wholesaleTier3 = wholesalePrices.wholesaleTier3.toFixed(2);
-//         // Only update controller if wholesale1kgPrice was changed
-//         if (updatedData.wholesale1kgPrice !== undefined) {
-//           updatedData.controller = wholesalePrices.controller.toFixed(4);
-//         }
-//       } else {
-//         console.error('Invalid wholesale prices calculated:', wholesalePrices);
-//         throw new Error('Failed to calculate valid wholesale prices');
-//       }
-//     }
-
-//     // Remove the recalculateWholesale flag before saving to the database
-//     delete updatedData.recalculateWholesale;
-
-//     const updatedProduct = await googleSheetsService.updateProductInPricesCalculator(tenantId, organizationId, id, updatedData);
-
-//     res.status(200).json({ message: 'Product updated successfully', data: updatedProduct });
-//   } catch (error) {
-//     console.error('Error updating product:', error);
-//     res.status(500).json({ message: 'Failed to update product', error: error.message });
-//   }
-// };
-
-// v.2 - semi-working version
-// exports.updateProduct = async (req, res) => {
-//   try {
-//     const tenantId = req.tenantId;
-//     const organizationId = req.organizationId;
-//     const { id } = req.params;
-//     const updatedData = req.body;
-
-//     console.log('tenantId:', tenantId, 'organizationId:', organizationId);
-//     console.log('Received update request for ID:', id);
-//     console.log('Updated data:', updatedData);
-
-//     if (!id) {
-//       throw new Error('No ID provided for update');
-//     }
-
-//     // Validate and ensure necessary fields
-//     if (!updatedData.packed1kgCost || isNaN(parseFloat(updatedData.packed1kgCost))) {
-//       throw new Error('Invalid or missing packed1kgCost');
-//     }
-//     if (!updatedData.costPlusPricing) {
-//       throw new Error('Invalid or missing costPlusPricing method');
-//     }
-
-//     let recalculatedPrices = null;
-
-//     if (updatedData.recalculateWholesale) {
-//       // Check which field was updated
-//       if (updatedData.wholesale1kgPrice !== undefined) {
-//         // Wholesale price was manually changed
-//         recalculatedPrices = calculateWholesalePricesBackwards(
-//           parseFloat(updatedData.packed1kgCost),
-//           updatedData.costPlusPricing,
-//           parseFloat(updatedData.wholesale1kgPrice)
-//         );
-//         updatedData.controller = recalculatedPrices.controller.toFixed(4);
-//       } else if (updatedData.controller !== undefined) {
-//         // Controller was manually changed
-//         recalculatedPrices = calculateWholesalePrices(
-//           parseFloat(updatedData.packed1kgCost),
-//           updatedData.costPlusPricing,
-//           updatedData.controller
-//         );
-//       } else if (updatedData.costPlusPricing) {
-//         // Cost-plus pricing method changed
-//         recalculatedPrices = calculateWholesalePrices(
-//           parseFloat(updatedData.packed1kgCost),
-//           updatedData.costPlusPricing,
-//           updatedData.controller
-//         );
-//       }
-
-//       if (recalculatedPrices) {
-//         updatedData.wholesale1kgPrice = recalculatedPrices.wholesale1kgPrice.toFixed(2);
-//         updatedData.wholesaleTier1 = recalculatedPrices.wholesaleTier1.toFixed(2);
-//         updatedData.wholesaleTier2 = recalculatedPrices.wholesaleTier2.toFixed(2);
-//         updatedData.wholesaleTier3 = recalculatedPrices.wholesaleTier3.toFixed(2);
-//       }
-//     }
-
-//     const updatedProduct = await googleSheetsService.updateProductInPricesCalculator(tenantId, organizationId, id, updatedData);
-
-//     res.status(200).json({ message: 'Product updated successfully', data: updatedProduct });
-//   } catch (error) {
-//     console.error('Error updating product:', error);
-//     res.status(500).json({ message: 'Failed to update product', error: error.message });
-//   }
-// };
 
 // v.6 - this is working now althoguh with that intermediate state
 exports.updateProduct = async (req, res) => {
