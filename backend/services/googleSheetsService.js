@@ -269,7 +269,69 @@ const generateOrderDetailId = () => {
     return result;
 };
 
+async function getCustomerPricing(tenantId, organizationId, customerName) {
+  // This function is for the "Place Order" function only
+  // Here's logic to fetch customer pricing from the "Wholesale Customers" sheet
+  // This should return an object with product prices for the specific customer
+
+  console.log('getCustomerPricing called with:', { tenantId, organizationId, customerName });
+  try {
+    const authClient = await getAuthClient();
+    const sheets = google.sheets({ version: "v4", auth: authClient });
+    const spreadsheetId = await getSpreadsheetId(
+      tenantId,
+      organizationId,
+      "WHOLESALE_CUSTOMERS"
+    );
+
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: "Wholesale Customers!A:DD", // Adjust this range as needed
+    });
+
+    const rows = response.data.values;
+    const headerRow = rows[0]; // The first row contains headers
+    const bagSizesRow = rows[1];
+
+    const customerRowNumber = findCustomerRow(rows, customerName);
+    if (customerRowNumber === -1) {
+      throw new Error(`Customer ${customerName} not found`);
+    }
+
+    const customerRow = rows[customerRowNumber];
+    console.log("Customer Row:", JSON.stringify(customerRow, null, 2));
+
+    const pricing = {};
+    const productDataStartColumnIndex = 24; // Column Y is the 25th column (0-indexed)
+
+    for (
+      let colIndex = productDataStartColumnIndex;
+      colIndex < headerRow.length;
+      colIndex += 6
+    ) {
+      const product = headerRow[colIndex + 1]; // Product name is in the second column of each block
+      if (product && product.trim() !== "") {
+        pricing[product] = {
+          [bagSizesRow[colIndex + 1]]:
+            parseFloat(customerRow[colIndex + 1].replace("£", "")) || null,
+          [bagSizesRow[colIndex + 3]]:
+            parseFloat(customerRow[colIndex + 3].replace("£", "")) || null,
+          [bagSizesRow[colIndex + 5]]:
+            parseFloat(customerRow[colIndex + 5].replace("£", "")) || null,
+        };
+      }
+    }
+
+    console.log("Pricing:", JSON.stringify(pricing, null, 2));
+    return pricing;
+  } catch (error) {
+    console.error("Error fetching customer pricing:", error);
+    throw error;
+  }
+}
+
 exports.submitOrder = async (tenantId, organizationId, orderItems, customerName) => {
+  console.log('submitOrder called with:', { tenantId, organizationId, orderItems, customerName });
   try {
     const authClient = await getAuthClient();
     const sheets = google.sheets({ version: 'v4', auth: authClient });
@@ -289,12 +351,12 @@ exports.submitOrder = async (tenantId, organizationId, orderItems, customerName)
     const orderDate = new Date().toLocaleDateString('en-GB');               // DD/MM/YYYY format
 
     // Fetch customer pricing
-    const customerPricing = await getCustomerPricing(customerName);
+    const customerPricing = await getCustomerPricing(tenantId, organizationId, customerName);
     console.log('Customer Pricing:', JSON.stringify(customerPricing, null, 2));
     
     const values = await Promise.all(orderItems.map(async (item) => {
       console.log('Processing item:', JSON.stringify(item, null, 2));
-      const sku = await getSKU(item.product, item.productType);
+      const sku = await getSKU(tenantId, organizationId, item.product, item.productType);
       const lineItemPrice = calculateLineItemPrice(item, customerPricing);
       const totalRevenue = lineItemPrice * parseFloat(item.quantity);
 
@@ -666,53 +728,6 @@ exports.setCustomPrices = async (tenantId, organizationId, customerData) => {
     return letter;
 }
 
-async function getCustomerPricing(customerName) {  // This function is for the "Place Order" function only 
-    // Here's logic to fetch customer pricing from the "Wholesale Customers" sheet
-    // This should return an object with product prices for the specific customer
-    try {
-        const authClient = await getAuthClient();
-        const sheets = google.sheets({ version: 'v4', auth: authClient });
-        const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'WHOLESALE_CUSTOMERS');
-
-        const response = await sheets.spreadsheets.values.get({
-            spreadsheetId,
-            range: 'Wholesale Customers!A:DD', // Adjust this range as needed
-        });
-
-        const rows = response.data.values;
-        const headerRow = rows[0]; // The first row contains headers
-        const bagSizesRow = rows[1];
-
-        const customerRowNumber = findCustomerRow(rows, customerName);
-        if (customerRowNumber === -1) {
-            throw new Error(`Customer ${customerName} not found`);
-        }
-
-        const customerRow = rows[customerRowNumber];
-        console.log('Customer Row:', JSON.stringify(customerRow, null, 2));
-
-        const pricing = {};
-        const productDataStartColumnIndex = 24; // Column Y is the 25th column (0-indexed)
-
-        for (let colIndex = productDataStartColumnIndex; colIndex < headerRow.length; colIndex += 6) {
-            const product = headerRow[colIndex + 1]; // Product name is in the second column of each block
-            if (product && product.trim() !== '') {
-                pricing[product] = {
-                    [bagSizesRow[colIndex + 1]]: parseFloat(customerRow[colIndex + 1].replace('£', '')) || null,
-                    [bagSizesRow[colIndex + 3]]: parseFloat(customerRow[colIndex + 3].replace('£', '')) || null,
-                    [bagSizesRow[colIndex + 5]]: parseFloat(customerRow[colIndex + 5].replace('£', '')) || null
-                };
-            }
-        }
-
-        console.log('Pricing:', JSON.stringify(pricing, null, 2));
-        return pricing;
-    } catch (error) {
-        console.error('Error fetching customer pricing:', error);
-        throw error;
-    }
-}
-
 async function getWholesaleCustomersPrices(tenantId, organizationId) {
     try {
         const authClient = await getAuthClient();
@@ -926,7 +941,7 @@ function calculateLineItemPrice(item, customerPricing) {
         console.warn(`Invalid price for ${product}`);
         return 0;
     }
-    return price * parseFloat(quantity);
+    return price;
 }
 
 async function getSKU(tenantId, organizationId, productName, productType) {

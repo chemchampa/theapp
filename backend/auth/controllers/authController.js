@@ -108,7 +108,7 @@ const authController = {
       console.log('User role:', user.role);
       console.log('User object from database:', user);
 
-      // Check password
+      // Check password: secure comparison for passwords
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
         return res.status(401).json({ message: 'Authentication failed' });
@@ -165,7 +165,6 @@ const authController = {
           role: req.user.role,
           tenantId: req.user.tenant_id,
           organizationId: req.user.organization_id,
-          role: req.user.role
         }
       });
     } else {

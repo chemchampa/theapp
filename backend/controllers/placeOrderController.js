@@ -21,13 +21,47 @@ exports.getProducts = async (req, res) => {
   }
 };
 
+// exports.submitOrder = async (req, res) => {
+//   try {
+//     console.log('Submitting order. User:', req.user);
+//     console.log('Order data:', req.body);
+//     const { orderItems, customerName } = req.body;
+//     const orderId = await googleSheetsService.submitOrder(req.tenantId, req.organizationId, orderItems, customerName);
+//     res.json({ message: 'Order submitted successfully', orderId });
+//     const orderId = await googleSheetsService.submitOrder(req.user.tenantId, req.user.organizationId, orderItems, customerName);
+//     res.json({ message: 'Order submitted successfully', orderId });
+//   } catch (error) {
+//     console.error('Error submitting order:', error);
+//     res.status(500).json({ error: 'An error occurred while submitting the order', details: error.message });
+//   }
+// };
+
 exports.submitOrder = async (req, res) => {
   try {
+    console.log('Submitting order. User:', req.user);
+    console.log('Order data:', req.body);
     const { orderItems, customerName } = req.body;
-    const orderId = await googleSheetsService.submitOrder(req.tenantId, req.organizationId, req.orderItems, req.customerName);
+    
+    // Log the values before passing them
+    console.log('Passing to submitOrder:', {
+      tenantId: req.user.tenant_id,
+      organizationId: req.user.organization_id,
+      orderItems,
+      customerName
+    });
+
+    const orderId = await googleSheetsService.submitOrder(
+      req.user.tenant_id,
+      req.user.organization_id,
+      orderItems,
+      customerName
+    );
     res.json({ message: 'Order submitted successfully', orderId });
   } catch (error) {
     console.error('Error submitting order:', error);
-    res.status(500).json({ error: 'An error occurred while submitting the order' });
+    res.status(500).json({ error: 'An error occurred while submitting the order', details: error.message });
   }
 };
+
+
+

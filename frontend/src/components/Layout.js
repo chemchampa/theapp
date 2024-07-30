@@ -10,8 +10,8 @@ import {
     CustomScrollbar, 
     ToggleSidebarButton,
     TopBar,
-    SearchContainer,
-    SearchBar,
+    // SearchContainer,
+    // SearchBar,
     UserProfile,
     UserAvatar,
 } from './GlobalStyle';
@@ -41,9 +41,9 @@ const Layout = ({ children }) => {
               </ToggleSidebarButton>
               <TopBar>
                 <div style={{ width: '100px' }}></div> {/* Spacer */}
-                <SearchContainer>
+                {/* <SearchContainer>
                   <SearchBar placeholder="Search orders..." />
-                </SearchContainer>
+                </SearchContainer> */}
                 <UserProfile>
                   <UserAvatar />
                   <span>John Doe</span>

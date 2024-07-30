@@ -43,11 +43,6 @@ const PlaceOrder = () => {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState('');
 
-  // useEffect(() => {
-  //   fetchProducts('Coffee');
-  //   fetchCustomers();
-  // }, []);
-
   useEffect(() => {
     console.log('Fetching products for:', currentItem.productType);
     fetchProducts(currentItem.productType);
@@ -55,18 +50,34 @@ const PlaceOrder = () => {
   }, [currentItem.productType]);
   
 
+  // const fetchCustomers = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:5000/api/customers');
+  //     setCustomers(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching customers:', error);
+  //   }
+  // };
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/customers');
+      const response = await axios.get('http://localhost:5000/api/customers', { withCredentials: true });
       setCustomers(response.data);
     } catch (error) {
       console.error('Error fetching customers:', error);
     }
-  };  
+  };
 
+  // const fetchProducts = async (productType) => {
+  //   try {
+  //     const response = await axios.get(`http://localhost:5000/api/products?type=${productType}`);
+  //     setProducts(response.data);
+  //   } catch (error) {
+  //     console.error('Error fetching products:', error);
+  //   }
+  // };
   const fetchProducts = async (productType) => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/products?type=${productType}`);
+      const response = await axios.get(`http://localhost:5000/api/products?type=${productType}`, { withCredentials: true });
       setProducts(response.data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -90,20 +101,6 @@ const PlaceOrder = () => {
       });
     }
   };
-
-  // const handleAddToOrder = () => {
-  //   if (currentItem.product && currentItem.quantity && selectedCustomer) {
-  //     setOrderItems(prev => [...prev, { ...currentItem, customer: selectedCustomer }]);
-  //     setCurrentItem({
-  //       productType: 'Coffee',
-  //       product: '',
-  //       quantity: '',
-  //       bagSize: '',
-  //       grindOption: ''
-  //     });
-  //     // Don't reset selectedCustomer here
-  //   }
-  // };
 
   const handleAddToOrder = () => {
     if (currentItem.product && currentItem.quantity && selectedCustomer) {
@@ -147,7 +144,9 @@ const PlaceOrder = () => {
       const response = await axios.post('http://localhost:5000/api/orders', { 
           orderItems, 
           customerName: selectedCustomer // Assuming we have a state variable for the selected customer
-      });
+      },
+      { withCredentials: true } // To include credentials to ensure that the authentication cookie is sent with the request
+      );
       console.log('Order submission response:', response.data);
       alert(`Order submitted successfully! Order ID: ${response.data.orderId}`);
       setOrderItems([]);

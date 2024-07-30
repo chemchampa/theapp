@@ -1,8 +1,8 @@
 import React from 'react';
 import {
     ToggleSidebarButton,
-    SearchContainer,
-    SearchBar,
+    // SearchContainer,
+    // SearchBar,
     UserProfile,
     UserAvatar,
     TopBarContainer,
@@ -13,9 +13,9 @@ const TopBar = ({ toggleSidebar, isSidebarVisible }) => (
       <ToggleSidebarButton onClick={toggleSidebar} isSidebarVisible={isSidebarVisible}>
         {isSidebarVisible ? '◀' : '▶'}
       </ToggleSidebarButton>
-      <SearchContainer>
+      {/* <SearchContainer>
         <SearchBar placeholder="Search orders..." />
-      </SearchContainer>
+      </SearchContainer> */}
       <UserProfile>
         <UserAvatar />
         <span>John Doe</span>
