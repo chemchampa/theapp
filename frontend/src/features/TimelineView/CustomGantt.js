@@ -68,14 +68,49 @@ const CustomGantt = ({ tasks }) => {
   }, [tasks, zoomLevel, pixelsPerDay]);
   */
 
-  const dateToPixels = useCallback((date) => {
-    return ((date - visibleStartDate) / (1000 * 60 * 60 * 24)) * pixelsPerDay[zoomLevel];
-  }, [visibleStartDate, zoomLevel, pixelsPerDay]);
+  /*
+  const dateToPixels = useCallback(
+    (date) => {
+      return (
+        ((date - visibleStartDate) / (1000 * 60 * 60 * 24)) *
+        pixelsPerDay[zoomLevel]
+      );
+    },
+    [visibleStartDate, zoomLevel, pixelsPerDay]
+  );
+  */
+  const dateToPixels = useCallback(
+    (date) => {
+      const daysDiff = (date - visibleStartDate) / (1000 * 60 * 60 * 24);
+      return daysDiff * pixelsPerDay[zoomLevel];
+    },
+    [visibleStartDate, zoomLevel, pixelsPerDay]
+  );
 
-  const pixelsToDate = useCallback((pixels) => {
-    return new Date(visibleStartDate.getTime() + (pixels / pixelsPerDay[zoomLevel]) * 24 * 60 * 60 * 1000);
-  }, [visibleStartDate, zoomLevel, pixelsPerDay]);
+  /*
+  const pixelsToDate = useCallback(
+    (pixels) => {
+      return new Date(
+        visibleStartDate.getTime() +
+          (pixels / pixelsPerDay[zoomLevel]) * 24 * 60 * 60 * 1000
+      );
+    },
+    [visibleStartDate, zoomLevel, pixelsPerDay]
+  );
+  */
 
+  const pixelsToDate = useCallback(
+    (pixels) => {
+      const daysDiff = pixels / pixelsPerDay[zoomLevel];
+      return new Date(
+        visibleStartDate.getTime() + daysDiff * 24 * 60 * 60 * 1000
+      );
+    },
+    [visibleStartDate, zoomLevel, pixelsPerDay]
+  );
+
+  /*
+  // v.1
   const extendTimeline = useCallback((direction) => {
     const visibleDuration = visibleEndDate - visibleStartDate;
     const extendDuration = visibleDuration / 2; // Extend by 50% of visible duration
@@ -97,6 +132,131 @@ const CustomGantt = ({ tasks }) => {
     const newWidth = totalDays * pixelsPerDay[zoomLevel];
     setTimelineWidth(newWidth);
   }, [visibleStartDate, visibleEndDate, zoomLevel, pixelsPerDay]);
+  */
+
+  /*
+  // v.2
+  const [timelineExtended, setTimelineExtended] = useState(false);
+  const extendTimeline = useCallback(
+    (direction) => {
+      const visibleDuration = visibleEndDate - visibleStartDate;
+      const extendDuration = visibleDuration / 2; // Extend by 50% of visible duration
+
+      let newStart = new Date(visibleStartDate);
+      let newEnd = new Date(visibleEndDate);
+
+      if (direction === "left") {
+        newStart = new Date(newStart.getTime() - extendDuration);
+      } else {
+        newEnd = new Date(newEnd.getTime() + extendDuration);
+      }
+
+      setVisibleStartDate(newStart);
+      setVisibleEndDate(newEnd);
+
+      // Update timeline width
+      const totalDays = (newEnd - newStart) / (1000 * 60 * 60 * 24);
+      const newWidth = totalDays * pixelsPerDay[zoomLevel];
+      setTimelineWidth(newWidth);
+
+      setTimelineExtended(true);
+    },
+    [visibleStartDate, visibleEndDate, zoomLevel, pixelsPerDay]
+  );
+  */
+
+  /*
+  // v.3
+  const [timelineExtended, setTimelineExtended] = useState(false);
+  const extendTimeline = useCallback(
+    (direction) => {
+      const currentViewPixel = scrollContainerRef.current?.scrollLeft || 0;
+      const visibleDuration = visibleEndDate - visibleStartDate;
+      const extendDuration = visibleDuration / 2; // Extend by 50% of visible duration
+
+      let newStart = new Date(visibleStartDate);
+      let newEnd = new Date(visibleEndDate);
+
+      if (direction === "left") {
+        newStart = new Date(newStart.getTime() - extendDuration);
+      } else {
+        newEnd = new Date(newEnd.getTime() + extendDuration);
+      }
+
+      setVisibleStartDate(newStart);
+      setVisibleEndDate(newEnd);
+
+      // Update timeline width
+      const totalDays = (newEnd - newStart) / (1000 * 60 * 60 * 24);
+      const newWidth = totalDays * pixelsPerDay[zoomLevel];
+      setTimelineWidth(newWidth);
+
+      setTimelineExtended(true);
+
+      // After updating dates and width
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          const newScrollLeft =
+            direction === "left"
+              ? currentViewPixel +
+                (extendDuration / (24 * 60 * 60 * 1000)) *
+                  pixelsPerDay[zoomLevel]
+              : currentViewPixel;
+          scrollContainerRef.current.scrollLeft = newScrollLeft;
+        }
+      });
+    },
+    [visibleStartDate, visibleEndDate, zoomLevel, pixelsPerDay]
+  );
+  */
+
+  // v.4
+  const [timelineExtended, setTimelineExtended] = useState(false);
+  const extendTimeline = useCallback(
+    (direction) => {
+      const currentViewPixel = scrollContainerRef.current?.scrollLeft || 0;
+      const visibleDuration = visibleEndDate - visibleStartDate;
+      const extendDuration = visibleDuration / 2; // Extend by 50% of visible duration
+
+      let newStart = new Date(visibleStartDate);
+      let newEnd = new Date(visibleEndDate);
+
+      if (direction === "left") {
+        newStart = new Date(newStart.getTime() - extendDuration);
+      } else {
+        newEnd = new Date(newEnd.getTime() + extendDuration);
+      }
+
+      // Check if the new range is already covered
+      if (newStart >= visibleStartDate && newEnd <= visibleEndDate) {
+        return; // No need to extend
+      }
+
+      setVisibleStartDate(newStart);
+      setVisibleEndDate(newEnd);
+
+      // Update timeline width
+      const totalDays = (newEnd - newStart) / (1000 * 60 * 60 * 24);
+      const newWidth = totalDays * pixelsPerDay[zoomLevel];
+      setTimelineWidth(newWidth);
+
+      setTimelineExtended(true);
+
+      // After updating dates and width
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          const newScrollLeft =
+            direction === "left"
+              ? currentViewPixel +
+                (extendDuration / (24 * 60 * 60 * 1000)) *
+                  pixelsPerDay[zoomLevel]
+              : currentViewPixel;
+          scrollContainerRef.current.scrollLeft = newScrollLeft;
+        }
+      });
+    },
+    [visibleStartDate, visibleEndDate, zoomLevel, pixelsPerDay]
+  );
 
   ////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -207,6 +367,8 @@ const CustomGantt = ({ tasks }) => {
   };
   ///////////////////////////////////////////////////////////////////
 
+  /*
+  // v.1
   const handleScroll = useCallback(() => {
     if (scrollContainerRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
@@ -231,8 +393,104 @@ const CustomGantt = ({ tasks }) => {
       }
     }
   }, [extendTimeline]);
+  */
+
+  /*
+  // v.2
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
+      const scrollRatio = scrollLeft / (scrollWidth - clientWidth);
+
+      if (scrollRatio < 0.2 && !timelineExtended) {
+        extendTimeline("left");
+        // Maintain scroll position
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            const newScrollLeft = scrollLeft + (scrollWidth - clientWidth) / 2;
+            scrollContainerRef.current.scrollLeft = newScrollLeft;
+          }
+        });
+      } else if (scrollRatio > 0.8 && !timelineExtended) {
+        extendTimeline("right");
+        // Maintain scroll position
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            const newScrollLeft = scrollLeft - (scrollWidth - clientWidth) / 2;
+            scrollContainerRef.current.scrollLeft = newScrollLeft;
+          }
+        });
+      } else {
+        setTimelineExtended(false);
+      }
+    }
+  }, [extendTimeline, timelineExtended]);
+  */
+
+  /*
+  // v.3
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
+      const scrollRatio = scrollLeft / (scrollWidth - clientWidth);
+
+      if (scrollRatio < 0.2 && !timelineExtended) {
+        extendTimeline("left");
+      } else if (scrollRatio > 0.8 && !timelineExtended) {
+        extendTimeline("right");
+      } else {
+        setTimelineExtended(false);
+      }
+    }
+  }, [extendTimeline, timelineExtended]);
+  */
+
+  /*
+  // v.4
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } =
+        scrollContainerRef.current;
+      const scrollRatio = scrollLeft / (scrollWidth - clientWidth);
+      const centerPixel = scrollLeft + clientWidth / 2;
+      const centerDate = pixelsToDate(centerPixel);
+      setLastCenteredDate(centerDate);
+
+      if (scrollRatio < 0.2 && !timelineExtended) {
+        extendTimeline("left");
+      } else if (scrollRatio > 0.8 && !timelineExtended) {
+        extendTimeline("right");
+      } else {
+        setTimelineExtended(false);
+      }
+    }
+  }, [extendTimeline, timelineExtended, pixelsToDate]);
+  */
+
+  // v.6
+  const handleScroll = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+      const scrollRatio = scrollLeft / (scrollWidth - clientWidth);
+    //   const centerPixel = scrollLeft + clientWidth / 2;
+    //   const centerDate = pixelsToDate(centerPixel);
+    //   setLastCenteredDate(centerDate);
+  
+      if (scrollRatio < 0.2 && !timelineExtended) {
+        extendTimeline("left");
+      } else if (scrollRatio > 0.8 && !timelineExtended) {
+        extendTimeline("right");
+      } else {
+        setTimelineExtended(false);
+      }
+    }
+  }, [extendTimeline, timelineExtended]);
 
 
+  /*
+  // v.1
   const renderTimeScale = useCallback(() => {
     const scale = [];
     let currentDate = new Date(visibleStartDate);
@@ -243,8 +501,21 @@ const CustomGantt = ({ tasks }) => {
       if (zoomLevel === "month") {
         scale.push(
           <g key={currentDate.toISOString()}>
-            <line x1={x} y1={50} x2={x} y2="100%" stroke="#eee" strokeDasharray="2,2" />
-            <text x={x} y={25} textAnchor="middle" fontSize="12px" fontWeight="bold">
+            <line
+              x1={x}
+              y1={50}
+              x2={x}
+              y2="100%"
+              stroke="#eee"
+              strokeDasharray="2,2"
+            />
+            <text
+              x={x}
+              y={25}
+              textAnchor="middle"
+              fontSize="12px"
+              fontWeight="bold"
+            >
               {currentDate.toLocaleString("default", { month: "short" })}
             </text>
             <text x={x} y={45} textAnchor="middle" fontSize="12px">
@@ -298,6 +569,64 @@ const CustomGantt = ({ tasks }) => {
               fontSize="12px"
               fontWeight="bold"
             >
+              {currentDate.getDate()}
+            </text>
+            <text x={x} y={45} textAnchor="middle" fontSize="12px">
+              {currentDate.toLocaleString("default", { month: "short" })}
+            </text>
+          </g>
+        );
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+    }
+    return scale;
+  }, [visibleStartDate, visibleEndDate, zoomLevel, dateToPixels]);
+  */
+
+  // v.2
+  const renderTimeScale = useCallback(() => {
+    const scale = [];
+    let currentDate = new Date(visibleStartDate);
+    const endDate = new Date(visibleEndDate);
+  
+    while (currentDate <= endDate) {
+      const x = dateToPixels(currentDate);
+  
+      if (zoomLevel === "month") {
+        if (currentDate.getDate() === 1) {
+          scale.push(
+            <g key={currentDate.toISOString()}>
+              <line x1={x} y1={50} x2={x} y2="100%" stroke="#eee" strokeDasharray="2,2" />
+              <text x={x} y={25} textAnchor="middle" fontSize="12px" fontWeight="bold">
+                {currentDate.toLocaleString("default", { month: "short" })}
+              </text>
+              <text x={x} y={45} textAnchor="middle" fontSize="12px">
+                {currentDate.getFullYear()}
+              </text>
+            </g>
+          );
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      } else if (zoomLevel === "week") {
+        if (currentDate.getDay() === 0) {
+          scale.push(
+            <g key={currentDate.toISOString()}>
+              <line x1={x} y1={50} x2={x} y2="100%" stroke="#eee" strokeDasharray="2,2" />
+              <text x={x} y={25} textAnchor="middle" fontSize="12px" fontWeight="bold">
+                Week {Math.ceil((currentDate.getDate() + currentDate.getDay()) / 7)}
+              </text>
+              <text x={x} y={45} textAnchor="middle" fontSize="12px">
+                {currentDate.toLocaleDateString()}
+              </text>
+            </g>
+          );
+        }
+        currentDate.setDate(currentDate.getDate() + 1);
+      } else {
+        scale.push(
+          <g key={currentDate.toISOString()}>
+            <line x1={x} y1={50} x2={x} y2="100%" stroke="#eee" strokeDasharray="2,2" />
+            <text x={x} y={25} textAnchor="middle" fontSize="12px" fontWeight="bold">
               {currentDate.getDate()}
             </text>
             <text x={x} y={45} textAnchor="middle" fontSize="12px">
@@ -399,8 +728,20 @@ const CustomGantt = ({ tasks }) => {
     handleMouseDown,
   ]);
 
+  /*
+  // v.1
   useEffect(() => {
     const totalDays = (visibleEndDate - visibleStartDate) / (1000 * 60 * 60 * 24);
+    const minWidth = scrollContainerRef.current?.clientWidth * 3 || 3000; // At least three times the container width
+    const newWidth = Math.max(totalDays * pixelsPerDay[zoomLevel], minWidth);
+    setTimelineWidth(newWidth);
+  }, [visibleStartDate, visibleEndDate, zoomLevel, pixelsPerDay]);
+  */
+
+  // v.2
+  useEffect(() => {
+    const totalDays =
+      (visibleEndDate - visibleStartDate) / (1000 * 60 * 60 * 24);
     const minWidth = scrollContainerRef.current?.clientWidth * 3 || 3000; // At least three times the container width
     const newWidth = Math.max(totalDays * pixelsPerDay[zoomLevel], minWidth);
     setTimelineWidth(newWidth);
@@ -425,15 +766,31 @@ const CustomGantt = ({ tasks }) => {
     const today = new Date();
     const middleX = dateToPixels(today);
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollLeft = middleX - scrollContainerRef.current.clientWidth / 2;
+      scrollContainerRef.current.scrollLeft =
+        middleX - scrollContainerRef.current.clientWidth / 2;
     }
   }, [dateToPixels]);
 
+  /*
+  // v,1
   // Call this function after the component mounts
   useEffect(() => {
     centerOnCurrentDate();
   }, [centerOnCurrentDate]);
+  */
 
+  // v,2
+  /* This change ensures that the centering only happens once when the component first mounts, and not on subsequent re-renders. */
+  const [initialCenteringDone, setInitialCenteringDone] = useState(false);
+  useEffect(() => {
+    if (!initialCenteringDone) {
+      centerOnCurrentDate();
+      setInitialCenteringDone(true);
+    }
+  }, [centerOnCurrentDate, initialCenteringDone]);
+
+  /*
+  // v.1
   const handleZoom = (newZoomLevel) => {
     setZoomLevel(newZoomLevel);
     if (tasks.length > 0) {
@@ -448,6 +805,142 @@ const CustomGantt = ({ tasks }) => {
       setTimelineWidth(newWidth);
     }
   };
+  */
+
+  /*
+  // v.2
+  const [lastCenteredDate, setLastCenteredDate] = useState(new Date());
+  const handleZoom = useCallback(
+    (newZoomLevel) => {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, clientWidth } = scrollContainerRef.current;
+        const centerPixel = scrollLeft + clientWidth / 2;
+        const centerDate = pixelsToDate(centerPixel);
+        setLastCenteredDate(centerDate);
+      }
+
+      setZoomLevel(newZoomLevel);
+
+      if (tasks.length > 0) {
+        const minDate = new Date(
+          Math.min(...tasks.map((t) => new Date(t.startDate)))
+        );
+        const maxDate = new Date(
+          Math.max(...tasks.map((t) => new Date(t.endDate)))
+        );
+
+        // Extend the visible range to include a buffer on both sides
+        const bufferDays = 30; // Adjust as needed
+        const newStartDate = new Date(minDate);
+        newStartDate.setDate(newStartDate.getDate() - bufferDays);
+        const newEndDate = new Date(maxDate);
+        newEndDate.setDate(newEndDate.getDate() + bufferDays);
+
+        setVisibleStartDate(newStartDate);
+        setVisibleEndDate(newEndDate);
+
+        const daysDiff = (newEndDate - newStartDate) / (1000 * 60 * 60 * 24);
+        const newWidth = Math.max(daysDiff * pixelsPerDay[newZoomLevel], 1000);
+        setTimelineWidth(newWidth);
+
+        // Center on the last centered date after changing zoom level
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            const newCenterPixel = dateToPixels(lastCenteredDate);
+            scrollContainerRef.current.scrollLeft =
+              newCenterPixel - scrollContainerRef.current.clientWidth / 2;
+          }
+        });
+      }
+    },
+    [tasks, pixelsPerDay, dateToPixels, pixelsToDate, lastCenteredDate]
+  );
+  */
+
+  /*
+  // v.3
+  const [lastCenteredDate, setLastCenteredDate] = useState(new Date());
+
+  const handleZoom = useCallback(
+    (newZoomLevel) => {
+      if (scrollContainerRef.current) {
+        const { scrollLeft, clientWidth } = scrollContainerRef.current;
+        const centerPixel = scrollLeft + clientWidth / 2;
+        const centerDate = pixelsToDate(centerPixel);
+        setLastCenteredDate(centerDate);
+      }
+
+      setZoomLevel(newZoomLevel);
+
+      if (tasks.length > 0) {
+        const minDate = new Date(
+          Math.min(...tasks.map((t) => new Date(t.startDate)))
+        );
+        const maxDate = new Date(
+          Math.max(...tasks.map((t) => new Date(t.endDate)))
+        );
+
+        // Extend the visible range to include a buffer on both sides
+        const bufferDays = 30; // Adjust as needed
+        const newStartDate = new Date(minDate);
+        newStartDate.setDate(newStartDate.getDate() - bufferDays);
+        const newEndDate = new Date(maxDate);
+        newEndDate.setDate(newEndDate.getDate() + bufferDays);
+
+        setVisibleStartDate(newStartDate);
+        setVisibleEndDate(newEndDate);
+
+        const daysDiff = (newEndDate - newStartDate) / (1000 * 60 * 60 * 24);
+        const newWidth = Math.max(daysDiff * pixelsPerDay[newZoomLevel], 1000);
+        setTimelineWidth(newWidth);
+
+        // Center on the last centered date after changing zoom level
+        requestAnimationFrame(() => {
+          if (scrollContainerRef.current) {
+            const newCenterPixel = dateToPixels(lastCenteredDate);
+            scrollContainerRef.current.scrollLeft =
+              newCenterPixel - scrollContainerRef.current.clientWidth / 2;
+          }
+        });
+      }
+    },
+    [tasks, pixelsPerDay, dateToPixels, pixelsToDate, lastCenteredDate]
+  );
+  */
+
+  // v.4
+  const handleZoom = useCallback((newZoomLevel) => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, clientWidth } = scrollContainerRef.current;
+      const centerPixel = scrollLeft + clientWidth / 2;
+      const centerDate = pixelsToDate(centerPixel);
+  
+      setZoomLevel(newZoomLevel);
+  
+      // Recalculate the visible date range based on the new zoom level
+      const daysVisible = clientWidth / pixelsPerDay[newZoomLevel];
+      const halfDaysVisible = daysVisible / 2;
+      const newStartDate = new Date(centerDate.getTime() - halfDaysVisible * 24 * 60 * 60 * 1000);
+      const newEndDate = new Date(centerDate.getTime() + halfDaysVisible * 24 * 60 * 60 * 1000);
+  
+      setVisibleStartDate(newStartDate);
+      setVisibleEndDate(newEndDate);
+  
+      // Update timeline width
+      const totalDays = (newEndDate - newStartDate) / (1000 * 60 * 60 * 24);
+      const newWidth = Math.max(totalDays * pixelsPerDay[newZoomLevel], clientWidth);
+      setTimelineWidth(newWidth);
+  
+      // Recenter on the same date after changing zoom level
+      requestAnimationFrame(() => {
+        if (scrollContainerRef.current) {
+          const newCenterPixel = dateToPixels(centerDate);
+          scrollContainerRef.current.scrollLeft = newCenterPixel - clientWidth / 2;
+        }
+      });
+    }
+  }, [pixelsPerDay, dateToPixels, pixelsToDate]);
+
 
   const renderTodayMarker = () => {
     const today = new Date();
@@ -467,7 +960,11 @@ const CustomGantt = ({ tasks }) => {
         <ZoomButton onClick={() => handleZoom("week")}>Week</ZoomButton>
         <ZoomButton onClick={() => handleZoom("month")}>Month</ZoomButton>
       </ZoomControls>
-      <ScrollContainer ref={scrollContainerRef} onScroll={handleScroll}>
+      <ScrollContainer
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        style={{ scrollBehavior: "auto" }} // Ensure smooth scrolling doesn't interfere
+      >
         <SVGContainer
           ref={svgRef}
           width={timelineWidth}
