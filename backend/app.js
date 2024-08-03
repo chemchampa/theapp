@@ -7,10 +7,12 @@ const passport = require('./config/passport');
 const authRoutes = require('./auth/routes/authRoutes');
 const { protect, checkRole } = require('./auth/middleware/authMiddleware');
 const { errorHandler } = require('./middleware/errorMiddleware');
+const authMiddleware = require('./auth/middleware/authMiddleware');
 const { setTenantAndOrganization } = require('./middleware/tenantMiddleware');
 const fs = require('fs');
 const roleLogger = require('./middleware/roleLogger');
 const adminController = require('./controllers/adminController');
+const timelineRoutes = require('./routes/timelineRoutes');
 
 
 
@@ -158,6 +160,13 @@ app.put('/admin/user-role/:userId', protect, setTenantAndOrganization, checkRole
   By adding the setTenantAndOrganization middleware, we maintain consistency with your other protected routes and ensure
   that the tenant and organization context is properly set for these admin operations.
 */
+
+
+// Timeline routes
+console.log('Timeline Routes:', timelineRoutes);
+// app.use('/api/timeline', protect, setTenantAndOrganization, timelineRoutes);
+app.use('/api/timeline', authMiddleware.protect, setTenantAndOrganization, timelineRoutes);
+
 
 
 // Error handling middleware

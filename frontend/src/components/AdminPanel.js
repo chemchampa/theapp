@@ -92,7 +92,7 @@ const AdminPanel = () => {
       {organizations.map(org => (
         <div key={org.id}>
           <h3>{org.name}</h3>
-          {['SETTINGS', 'ORDERS', 'WHOLESALE_CUSTOMERS', 'RETAIL_INVENTORY', 'COFFEE_PRICES'].map(type => (
+          {['SETTINGS', 'ORDERS', 'WHOLESALE_CUSTOMERS', 'RETAIL_INVENTORY', 'COFFEE_PRICES', `TIMELINE`].map(type => (
             <div key={type}>
               <label>{type}:</label>
               <input 

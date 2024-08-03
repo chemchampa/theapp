@@ -16,6 +16,7 @@ import PricesCalculator from './features/PricesCalculator/PricesCalculator';
 import SelectOrganization from './components/SelectOrganization';
 import RegisterPage from './components/RegisterPage';
 import AdminPanel from './components/AdminPanel';
+import TimelineView from './features/TimelineView/TimelineView';
 // Import other feature components when neccessary
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
               } 
             />
             <Route path="/debug" element={<Debug />} />
+            <Route path="/timeline" element={<ProtectedRoute><TimelineView /></ProtectedRoute>} />
             {/* Add routes for other features */}
           </Routes>
         </Layout>

@@ -108,10 +108,6 @@ function prepareOutputData(filteredData) {
     return outputData; 
 }   
 
-
-//////////////////////////////////////////////////////
-
-
 async function generatePickingList(tenantId, organizationId, dateFilter) {
   if (!tenantId || !organizationId) {
     throw new Error(`Invalid tenantId or organizationId: tenantId=${tenantId}, organizationId=${organizationId}`);
@@ -141,6 +137,10 @@ async function generatePickingList(tenantId, organizationId, dateFilter) {
     throw error;
   }
 }
+
+
+//////////////////////////////////////////////////////
+
 
 exports.getCustomers = async (tenantId, organizationId) => {
   try {
@@ -1271,6 +1271,157 @@ async function getSheetIdforPricesCalculator(tenantId, organizationId, sheetName
   return sheet.properties.sheetId;
 }
 
+//////////////////////////////////////////////* Timeline View Gantt Chart tooling ▼ ▼ ▼ */
+
+async function getTimelineData(tenantId, organizationId) {
+  try {
+    const authClient = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'TIMELINE');
+
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Timeline!A2:G',
+    });
+
+    return response.data.values.map(row => ({
+      id: row[0],
+      taskName: row[1],
+      startDate: row[2],
+      endDate: row[3],
+      assignee: row[4],
+      progress: row[5],
+      dependencies: row[6] ? row[6].split(',') : []
+    }));
+  } catch (error) {
+    console.error('Error fetching timeline data:', error);
+    throw error;
+  }
+}
+
+async function createTimelineItem(tenantId, organizationId, newItem) {
+  try {
+    const authClient = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'TIMELINE');
+
+    const values = [
+      [
+        newItem.id,
+        newItem.taskName,
+        newItem.startDate,
+        newItem.endDate,
+        newItem.assignee,
+        newItem.progress,
+        newItem.dependencies.join(',')
+      ]
+    ];
+
+    await sheets.spreadsheets.values.append({
+      spreadsheetId,
+      range: 'Timeline!A2:G',
+      valueInputOption: 'USER_ENTERED',
+      resource: { values },
+    });
+
+    return newItem;
+  } catch (error) {
+    console.error('Error creating timeline item:', error);
+    throw error;
+  }
+}
+
+async function updateTimelineItem(tenantId, organizationId, id, updatedItem) {
+  try {
+    const authClient = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'TIMELINE');
+
+    // Find the row with the matching id
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Timeline!A2:A',
+    });
+
+    const idColumn = response.data.values.flat();
+    const rowIndex = idColumn.indexOf(id) + 2; // +2 because of header row and 0-indexing
+
+    if (rowIndex === 1) {
+      throw new Error('Task not found');
+    }
+
+    const range = `Timeline!A${rowIndex}:G${rowIndex}`;
+    const values = [
+      [
+        updatedItem.id,
+        updatedItem.taskName,
+        updatedItem.startDate,
+        updatedItem.endDate,
+        updatedItem.assignee,
+        updatedItem.progress,
+        updatedItem.dependencies.join(',')
+      ]
+    ];
+
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range,
+      valueInputOption: 'USER_ENTERED',
+      resource: { values },
+    });
+
+    return updatedItem;
+  } catch (error) {
+    console.error('Error updating timeline item:', error);
+    throw error;
+  }
+}
+
+async function deleteTimelineItem(tenantId, organizationId, id) {
+  try {
+    const authClient = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth: authClient });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'TIMELINE');
+
+    // Find the row with the matching id
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Timeline!A2:A',
+    });
+
+    const idColumn = response.data.values.flat();
+    const rowIndex = idColumn.indexOf(id) + 2; // +2 because of header row and 0-indexing
+
+    if (rowIndex === 1) {
+      throw new Error('Task not found');
+    }
+
+    // Delete the row
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      resource: {
+        requests: [
+          {
+            deleteDimension: {
+              range: {
+                sheetId: 0, // Assuming Timeline is the first sheet
+                dimension: 'ROWS',
+                startIndex: rowIndex - 1,
+                endIndex: rowIndex
+              }
+            }
+          }
+        ]
+      }
+    });
+
+  } catch (error) {
+    console.error('Error deleting timeline item:', error);
+    throw error;
+  }
+}
+
+//////////////////////////////////////////////* End ▲ ▲ ▲ */
 
 
 module.exports = {
@@ -1293,6 +1444,10 @@ module.exports = {
   getPricesCalculatorData: exports.getPricesCalculatorData,
   updateProductInPricesCalculator,
   deleteProductsFromPricesCalculator,
+  getTimelineData,
+  createTimelineItem,
+  updateTimelineItem,
+  deleteTimelineItem,
   // ... any other functions I'm exporting
 };
   
