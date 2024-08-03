@@ -13,8 +13,15 @@ import {
   StyledDatePicker,
   ActionButton,
   TableHeader,
-  FunctionalityBar
+  TableScrollContainer,
+  FunctionalityBar,
+  FixedFunctionalityBar,
 } from '../../components/GlobalStyle';
+
+import {
+  ScrollableContent,
+} from './WholesaleOrderPickingStyles';
+
 
 
 
@@ -313,108 +320,114 @@ const WholesaleOrderPicking = () => {
     return (
       <>
         <TableHeader>Wholesale Orders Picking</TableHeader>
-        <FunctionalityBar>
-          <div>
-            <label htmlFor="datePicker">Select Date: </label>
-            <StyledDatePicker
-              id="datePicker"
-              selected={selectedDate}
-              onChange={(date) => {
-                console.log('Date selected:', date);
-                setSelectedDate(date);
-                fetchData(date);
-              }}
-              dateFormat="dd/MM/yyyy"
-              locale="en-GB" // To ensure UK date format
-              portalId="root-portal"
-            />
-          </div>
-          <div>
-            <ActionButton onClick={expandAllOrders}>Expand All</ActionButton>
-            <ActionButton onClick={collapseAllOrders}>Collapse All</ActionButton>
-            <ActionButton onClick={() => handlePrint(selectedDate)}>
-              <span role="img" aria-label="print">🖨️</span> Print Selected
-            </ActionButton>
-          </div>
-          {/* We'll add more functionality buttons here later */}
-        </FunctionalityBar>
-        <Table>
-          <thead>
-            <tr>
-              <Th style={{ width: `${columnWidths.checkbox.width}px` }}>
-                <input
-                  type="checkbox"
-                  checked={selectAll}
-                  onChange={handleSelectAll}
-                />
-              </Th>
-              {Object.entries(columnWidths).map(([column, { width, isResizable }]) => (
-                column !== 'checkbox' && (
-                  <Th key={column} style={{ width: `${width}px` }}>
-                    {column.charAt(0).toUpperCase() + column.slice(1)}
-                    {isResizable && <ResizeHandle onMouseDown={startResize(column)} />}
+        <FixedFunctionalityBar>
+          <FunctionalityBar>
+            <div>
+              <label htmlFor="datePicker">Select Date: </label>
+              <StyledDatePicker
+                id="datePicker"
+                selected={selectedDate}
+                onChange={(date) => {
+                  console.log('Date selected:', date);
+                  setSelectedDate(date);
+                  fetchData(date);
+                }}
+                dateFormat="dd/MM/yyyy"
+                locale="en-GB" // To ensure UK date format
+                portalId="root-portal"
+              />
+            </div>
+            <div>
+              <ActionButton onClick={expandAllOrders}>Expand All</ActionButton>
+              <ActionButton onClick={collapseAllOrders}>Collapse All</ActionButton>
+              <ActionButton onClick={() => handlePrint(selectedDate)}>
+                <span role="img" aria-label="print">🖨️</span> Print Selected
+              </ActionButton>
+            </div>
+            {/* We'll add more functionality buttons here later */}
+          </FunctionalityBar>
+        </FixedFunctionalityBar>
+        <ScrollableContent>
+          <TableScrollContainer>
+            <Table>
+              <thead>
+                <tr>
+                  <Th style={{ width: `${columnWidths.checkbox.width}px` }}>
+                    <input
+                      type="checkbox"
+                      checked={selectAll}
+                      onChange={handleSelectAll}
+                    />
                   </Th>
-                )
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(data).map(([customer, orders]) => (
-              <React.Fragment key={customer}>
-                {Object.entries(orders).map(([orderId, orderData]) => {
-                  const isExpanded = expandedOrders[customer]?.[orderId];
-                  return (
-                    <React.Fragment key={orderId}>
-                      <CustomerHeaderRow onClick={() => toggleOrderExpansion(customer, orderId)}>
-                        <Td style={{ width: '30px' }}> {/* Fixed width for checkbox */}
-                          <input
-                            type="checkbox"
-                            checked={selectedRows[customer]?.[orderId] || false}
-                            onChange={() => handleCheckboxChange(customer, orderId)}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </Td>
-                        {Object.entries(columnWidths).map(([column, { width }]) => 
-                          column !== 'checkbox' && (
-                            <Td key={column} style={{ width: `${width}px` }}>
-                              {column === 'customer' && (
-                                <>
-                                  <ToggleButton expanded={isExpanded}>▶</ToggleButton>
-                                  {customer}
-                                </>
-                              )}
-                              {column === 'orderId' && orderId}
-                              {column === 'totalAmount' && `${orderData.totalAmount.toFixed(2)} kg`}
-                              {column === 'orderStatus' && orderData.orderStatus}
+                  {Object.entries(columnWidths).map(([column, { width, isResizable }]) => (
+                    column !== 'checkbox' && (
+                      <Th key={column} style={{ width: `${width}px` }}>
+                        {column.charAt(0).toUpperCase() + column.slice(1)}
+                        {isResizable && <ResizeHandle onMouseDown={startResize(column)} />}
+                      </Th>
+                    )
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(data).map(([customer, orders]) => (
+                  <React.Fragment key={customer}>
+                    {Object.entries(orders).map(([orderId, orderData]) => {
+                      const isExpanded = expandedOrders[customer]?.[orderId];
+                      return (
+                        <React.Fragment key={orderId}>
+                          <CustomerHeaderRow onClick={() => toggleOrderExpansion(customer, orderId)}>
+                            <Td style={{ width: '30px' }}> {/* Fixed width for checkbox */}
+                              <input
+                                type="checkbox"
+                                checked={selectedRows[customer]?.[orderId] || false}
+                                onChange={() => handleCheckboxChange(customer, orderId)}
+                                onClick={(e) => e.stopPropagation()}
+                              />
                             </Td>
-                          )
-                        )}
-                      </CustomerHeaderRow>
-                      {isExpanded && orderData.items.map((item, itemIndex) => (
-                        <ItemRow key={`${orderId}-${itemIndex}`} even={itemIndex % 2 === 0}>
-                          <Td style={{ width: '30px' }}></Td> {/* Fixed width for checkbox */}
-                          {Object.entries(columnWidths).map(([column, { width }]) => 
-                            column !== 'checkbox' && (
-                              <Td key={column} style={{ width: `${width}px` }}>
-                                {column === 'product' && item[2]}
-                                {column === 'totalQty' && item[3]}
-                                {column === 'bagSize' && item[4]}
-                                {column === 'grindOption' && item[5]}
-                                {column === 'totalAmount' && `${item[6]} kg`}
-                                {column === 'orderStatus' && (item[7] !== orderData.orderStatus ? item[7] : '')}
-                              </Td>
-                            )
-                          )}
-                        </ItemRow>
-                      ))}
-                    </React.Fragment>
-                  );
-                })}
-              </React.Fragment>
-            ))}
-          </tbody>
+                            {Object.entries(columnWidths).map(([column, { width }]) => 
+                              column !== 'checkbox' && (
+                                <Td key={column} style={{ width: `${width}px` }}>
+                                  {column === 'customer' && (
+                                    <>
+                                      <ToggleButton expanded={isExpanded}>▶</ToggleButton>
+                                      {customer}
+                                    </>
+                                  )}
+                                  {column === 'orderId' && orderId}
+                                  {column === 'totalAmount' && `${orderData.totalAmount.toFixed(2)} kg`}
+                                  {column === 'orderStatus' && orderData.orderStatus}
+                                </Td>
+                              )
+                            )}
+                          </CustomerHeaderRow>
+                          {isExpanded && orderData.items.map((item, itemIndex) => (
+                            <ItemRow key={`${orderId}-${itemIndex}`} even={itemIndex % 2 === 0}>
+                              <Td style={{ width: '30px' }}></Td> {/* Fixed width for checkbox */}
+                              {Object.entries(columnWidths).map(([column, { width }]) => 
+                                column !== 'checkbox' && (
+                                  <Td key={column} style={{ width: `${width}px` }}>
+                                    {column === 'product' && item[2]}
+                                    {column === 'totalQty' && item[3]}
+                                    {column === 'bagSize' && item[4]}
+                                    {column === 'grindOption' && item[5]}
+                                    {column === 'totalAmount' && `${item[6]} kg`}
+                                    {column === 'orderStatus' && (item[7] !== orderData.orderStatus ? item[7] : '')}
+                                  </Td>
+                                )
+                              )}
+                            </ItemRow>
+                          ))}
+                        </React.Fragment>
+                      );
+                    })}
+                  </React.Fragment>
+                ))}
+              </tbody>
 
-        </Table>
+            </Table>
+          </TableScrollContainer>
+          </ScrollableContent>
       </>
     );
   }

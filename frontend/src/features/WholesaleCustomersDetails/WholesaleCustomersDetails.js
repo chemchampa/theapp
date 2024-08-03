@@ -10,11 +10,13 @@ import {
     ActionButton,
     TableHeader,
     TableScrollContainer,
-    ResizeHandle
+    ResizeHandle,
+    FixedFunctionalityBar,
 } from '../../components/GlobalStyle';
 
 import {
     WholesaleCustomersDetailsContainer,
+    ScrollableContent,
     StyledInput,
     StyledSelect,
     ColumnSelectorOverlay,
@@ -208,98 +210,102 @@ const WholesaleCustomersDetails = () => {
     return (
         <WholesaleCustomersDetailsContainer>
             <TableHeader>Wholesale Customers Details</TableHeader>
-            <FunctionalityBar>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <StyledInput
-                        type="text"
-                        placeholder="Search customers..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ width: '200px', marginRight: '10px' }}
-                    />
-                    <StatusSelector currentStatus={statusFilter} setStatus={setStatusFilter} />
-                    {showColumnSelector && (
-                        <ColumnSelector 
-                            columns={Object.keys(columnWidths).filter(col => col !== 'checkbox')}
-                            visibleColumns={visibleColumns}
-                            toggleColumnVisibility={toggleColumnVisibility}
-                            onClose={() => setShowColumnSelector(false)}
+            <FixedFunctionalityBar>
+                <FunctionalityBar>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <StyledInput
+                            type="text"
+                            placeholder="Search customers..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ width: '200px', marginRight: '10px' }}
                         />
-                    )}
-                    <ActionButton onClick={() => navigate('/add-customer')}>Add Customer</ActionButton>
-                </div>
-                <div>
-                    <ActionButton onClick={() => setShowColumnSelector(!showColumnSelector)}>
-                        Select Columns
-                    </ActionButton>
-                    <ActionButton onClick={handleExport}>Export to CSV</ActionButton>
-                    <ActionButton onClick={handlePrint}>Print Selected</ActionButton>
-                </div>
-            </FunctionalityBar>
-            <TableScrollContainer>
-                <Table>
-                    <thead>
-                        <tr>
-                            <Th style={{ width: `${columnWidths.checkbox.width}px` }}>
-                                <input
-                                    type="checkbox"
-                                    checked={selectAll}
-                                    onChange={handleSelectAll}
-                                />
-                            </Th>
-                            {visibleColumns.map(column => (
-                                <Th 
-                                    key={column} 
-                                    style={{ width: `${columnWidths[column]?.width || 100}px`, position: 'relative' }} 
-                                >
-                                    <ThContent onClick={() => handleSort(column)}>
-                                        {column}
-                                        {column === 'Business Name' && (
-                                            sortColumn === column 
-                                                ? (sortDirection === 'asc' ? <AscIcon /> : <DescIcon />)
-                                                : <NeutralIcon />
-                                        )}
-                                        {column !== 'Business Name' && column !== 'checkbox' && (
-                                            <span style={{ opacity: sortColumn === column ? 1 : 0, transition: 'opacity 0.2s' }}>
-                                                {sortColumn === column 
-                                                    ? (sortDirection === 'asc' ? <AscIcon /> : <DescIcon />)
-                                                    : <NeutralIcon />
-                                                }
-                                            </span>
-                                        )}
-                                    </ThContent>
-                                    {columnWidths[column]?.isResizable && (
-                                        <ResizeHandle 
-                                            onMouseDown={(e) => {
-                                                e.stopPropagation();
-                                                startResize(column)(e);
-                                            }}
-                                        />
-                                    )}
-                                </Th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredCustomers.map(customer => (
-                            <CustomerRow key={customer.ID}>
-                                <Td style={{ width: `${columnWidths.checkbox.width}px` }}>
+                        <StatusSelector currentStatus={statusFilter} setStatus={setStatusFilter} />
+                        {showColumnSelector && (
+                            <ColumnSelector 
+                                columns={Object.keys(columnWidths).filter(col => col !== 'checkbox')}
+                                visibleColumns={visibleColumns}
+                                toggleColumnVisibility={toggleColumnVisibility}
+                                onClose={() => setShowColumnSelector(false)}
+                            />
+                        )}
+                        <ActionButton onClick={() => navigate('/add-customer')}>Add Customer</ActionButton>
+                    </div>
+                    <div>
+                        <ActionButton onClick={() => setShowColumnSelector(!showColumnSelector)}>
+                            Select Columns
+                        </ActionButton>
+                        <ActionButton onClick={handleExport}>Export to CSV</ActionButton>
+                        <ActionButton onClick={handlePrint}>Print Selected</ActionButton>
+                    </div>
+                </FunctionalityBar>
+            </FixedFunctionalityBar>
+            <ScrollableContent>
+                <TableScrollContainer>
+                    <Table>
+                        <thead>
+                            <tr>
+                                <Th style={{ width: `${columnWidths.checkbox.width}px` }}>
                                     <input
                                         type="checkbox"
-                                        checked={selectedRows[customer.ID] || false}
-                                        onChange={() => handleCheckboxChange(customer.ID)}
+                                        checked={selectAll}
+                                        onChange={handleSelectAll}
                                     />
-                                </Td>
+                                </Th>
                                 {visibleColumns.map(column => (
-                                    <Td key={column} style={{ width: `${columnWidths[column]?.width || 100}px` }}>
-                                        {customer[column]}
-                                    </Td>
+                                    <Th 
+                                        key={column} 
+                                        style={{ width: `${columnWidths[column]?.width || 100}px`, position: 'relative' }} 
+                                    >
+                                        <ThContent onClick={() => handleSort(column)}>
+                                            {column}
+                                            {column === 'Business Name' && (
+                                                sortColumn === column 
+                                                    ? (sortDirection === 'asc' ? <AscIcon /> : <DescIcon />)
+                                                    : <NeutralIcon />
+                                            )}
+                                            {column !== 'Business Name' && column !== 'checkbox' && (
+                                                <span style={{ opacity: sortColumn === column ? 1 : 0, transition: 'opacity 0.2s' }}>
+                                                    {sortColumn === column 
+                                                        ? (sortDirection === 'asc' ? <AscIcon /> : <DescIcon />)
+                                                        : <NeutralIcon />
+                                                    }
+                                                </span>
+                                            )}
+                                        </ThContent>
+                                        {columnWidths[column]?.isResizable && (
+                                            <ResizeHandle 
+                                                onMouseDown={(e) => {
+                                                    e.stopPropagation();
+                                                    startResize(column)(e);
+                                                }}
+                                            />
+                                        )}
+                                    </Th>
                                 ))}
-                            </CustomerRow>
-                        ))}
-                    </tbody>
-                </Table>
-            </TableScrollContainer>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filteredCustomers.map(customer => (
+                                <CustomerRow key={customer.ID}>
+                                    <Td style={{ width: `${columnWidths.checkbox.width}px` }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedRows[customer.ID] || false}
+                                            onChange={() => handleCheckboxChange(customer.ID)}
+                                        />
+                                    </Td>
+                                    {visibleColumns.map(column => (
+                                        <Td key={column} style={{ width: `${columnWidths[column]?.width || 100}px` }}>
+                                            {customer[column]}
+                                        </Td>
+                                    ))}
+                                </CustomerRow>
+                            ))}
+                        </tbody>
+                    </Table>
+                </TableScrollContainer>
+            </ScrollableContent>
         </WholesaleCustomersDetailsContainer>
     );
 };

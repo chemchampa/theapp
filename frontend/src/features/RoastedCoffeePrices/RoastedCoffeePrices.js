@@ -375,7 +375,6 @@ const RoastedCoffeePrices = () => {
                       ))}
                   </tbody>
               </Table>
-
             </TableScrollContainer>
           </ScrollableContent>
         </RoastedCoffeePricesContainer>
