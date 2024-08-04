@@ -55,6 +55,8 @@ export const ZoomButton = styled.button`
   border: 1px solid #ccc;
   border-radius: 3px;
   cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-weight: bold;
 
   &:hover {
     background-color: #e0e0e0;
