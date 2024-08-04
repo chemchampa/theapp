@@ -376,6 +376,107 @@ export const PopupButton = styled.button`
   }
 `;
 
+////////////// * Editing Product Pricing ///////////////////////////////////////////////
+
+export const ClickableProductName = styled.span`
+  cursor: pointer;
+  color: #0066cc;
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
+export const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const EditFormContainer = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 80%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
+`;
+
+export const FormTitle = styled.h2`
+  margin-bottom: 20px;
+`;
+
+// export const ButtonGroup = styled.div`
+//   display: flex;
+//   justify-content: flex-end;
+//   margin-top: 20px;
+// `;
+
+export const FormLayout = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+
+export const Column = styled.div`
+  flex: 1;
+`;
+
+export const Section = styled.div`
+  margin-bottom: 20px;
+`;
+
+export const SectionTitle = styled.h3`
+  font-size: 24px;
+  margin: 30px 0;
+`;
+
+export const FormRow = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+`;
+
+export const EditProductFormLabel = styled.label`
+  display: block;
+  margin-bottom: 10px;
+  // padding-bottom: 5px;
+  font-weight: bold;
+  font-size: 13px;
+`;
+
+export const RowLabel = styled.span`
+  font-weight: bold;
+  font-size: 13px;
+  min-width: 150px;
+  display: inline-block;
+`;
+
+export const EditFormStyledInput = styled.input`
+  padding: 5px 10px;
+  margin-right: 30px;
+  border: 1px solid ${colors.border};
+  border-radius: 4px;
+  font-size: 13px;
+  width: 50px;
+`;
+
+export const FormGroupProduct = styled.div`
+  margin-bottom: 20px;
+`;
+
+export const FormGroupPrices = styled.div`
+  margin-bottom: 20px;
+  margin-left: 20px;
+`;
+
+
 
 
 /////////////////////////////////////////////////////////////

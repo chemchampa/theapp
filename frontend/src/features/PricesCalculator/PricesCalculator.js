@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AddProductForm from './AddProductForm';
 import debounce from '../../utils/debounce';
+import EditProductForm from './EditProductForm';
 import {
   MainContainer,
   FormContainer,
@@ -29,6 +30,7 @@ import {
   PopupContent,
   PopupButtons,
   PopupButton,
+  ClickableProductName,
 } from './PricesCalculatorStyles';
 import {
   Table,
@@ -57,13 +59,22 @@ const PricesCalculator = () => {
   const [updatingCells, setUpdatingCells] = useState({});
   const [showColumnSelector, setShowColumnSelector] = useState(false);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   useEffect(() => {
     fetchTableData();
   }, []);
 
   const columns = [
-    { key: 'coffeeProduct', label: 'Coffee Product' },
+    { 
+      key: 'coffeeProduct', 
+      label: 'Coffee Product',
+      render: (value, row) => (
+        <ClickableProductName onClick={() => handleProductClick(row)}>
+          {value}
+        </ClickableProductName>
+      )
+    },
     { key: 'greenCoffeePrice', label: 'Green Coffee Price' },
     { key: 'batchSize', label: 'Batch Size' },
     { key: 'weightLoss', label: 'Weight Loss %' },
@@ -278,6 +289,31 @@ const PricesCalculator = () => {
     }
   };
 
+  /////////////////////////////////////
+
+  const handleProductClick = (product) => {
+    console.log('Product clicked:', product);
+    setSelectedProduct(product);
+  };
+
+  const handleSaveProduct = async (updatedProduct) => {
+    try {
+      const response = await axios.put(`/api/prices-calculator/${updatedProduct.id}`, updatedProduct);
+      if (response.data) {
+        const updatedData = tableData.map(item => 
+          item.id === updatedProduct.id ? response.data : item
+        );
+        setTableData(updatedData);
+        setSelectedProduct(null);
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      setError('Failed to update product');
+    }
+  };
+
+  /////////////////////////////////////
+
   const toggleColumnVisibility = (columnKey) => {
     setVisibleColumns(prev => {
       if (prev.includes(columnKey)) {
@@ -459,7 +495,7 @@ const PricesCalculator = () => {
                             const column = columns.find(col => col.key === columnKey);
                             return (
                               <Td key={columnKey} style={{ width: columnWidths[column.label] ? `${columnWidths[column.label].width}px` : 'auto' }}>
-                                {column.editable ? (
+                                {column.render ? column.render(item[columnKey], item) : column.editable ? (
                                   <EditableCell
                                     value={item[columnKey]}
                                     onValueChange={(value) => handleCellEdit(rowIndex, columnKey, value)}
@@ -483,6 +519,13 @@ const PricesCalculator = () => {
           </TableContentContainer>
         </div>
       </ScrollableContent>
+      {selectedProduct && (
+        <EditProductForm
+          product={selectedProduct}
+          onSave={handleSaveProduct}
+          onCancel={() => setSelectedProduct(null)}
+        />
+      )}
     </MainContainer>
   );
 };
