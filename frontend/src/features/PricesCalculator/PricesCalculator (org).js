@@ -66,6 +66,370 @@ const PricesCalculator = () => {
   }, []);
 
 
+  
+  // const columns = [
+  //   { 
+  //     key: 'coffeeProduct', 
+  //     label: 'Coffee Product',
+  //     render: (value, row) => (
+  //       <ClickableProductName onClick={() => handleProductClick(row)}>
+  //         {value}
+  //       </ClickableProductName>
+  //     )
+  //   },
+  //   { key: 'greenCoffeePrice', label: 'Green Coffee Price' },
+  //   { key: 'batchSize', label: 'Batch Size' },
+  //   { key: 'weightLoss', label: 'Weight Loss %' },
+  //   { key: 'postRoastCost', label: 'Post Roast Cost of 1kg' },
+  //   { key: 'labelUnitPrice', label: 'Label Unit Price' },
+  //   { key: 'packagingUnitPrice', label: 'Packaging Unit Price' },
+  //   { key: 'packed1kgCost', label: 'Packed 1kg cost' },
+  //   { key: 'packed200gCost', label: 'Packed 200g cost' },
+  //   { key: 'markupMultiplier200g', label: 'Markup Multiplier for 200g', editable: true },
+  //   { key: 'retail200gPrice', label: 'Retail 200g price', editable: true },
+  //   { key: 'markupMultiplier1kg', label: 'Markup Multiplier for 1kg', editable: true },
+  //   { key: 'retail1kgPrice', label: 'Retail 1kg price', editable: true },
+  //   {
+  //     key: 'costPlusPricing',
+  //     label: 'Cost-plus Pricing',
+  //     editable: true,
+  //     editor: ({ value, onChange }) => (
+  //       <StyledSelect
+  //         value={value}
+  //         onChange={(e) => onChange(e.target.value)}
+  //       >
+  //         <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+  //         <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+  //         <option value="Desired Profit Margin">Desired Profit Margin</option>
+  //         <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+  //         {/* <option value="Tiered Markup Based on Cost">Tiered Markup Based on Cost</option> */}
+  //       </StyledSelect>
+  //     )
+  //   },
+    
+  //   { key: 'markupMultiplierWholesale200g', label: 'Markup Multiplier for 200g Wholesale', editable: true },
+  //   { key: 'wholesale200gPrice', label: 'Wholesale 200g price', editable: true },
+  //   {
+  //     key: 'controller',
+  //     label: 'Controller',
+  //     editable: true,
+  //     editor: ({ value, onChange }) => {
+  //       return (
+  //         <MultipliersInput
+  //           type="text"
+  //           value={value}
+  //           onChange={(e) => onChange(e.target.value)}
+  //         />
+  //       );
+  //     }
+  //   },
+  //   { key: 'wholesale1kgPrice', label: 'Wholesale 1kg List Price', editable: true },
+  //   { key: 'wholesaleTier1', label: 'Wholesale Price: Tier 1 (75KG+)', editable: true },
+  //   { key: 'wholesaleTier2', label: 'Wholesale Price: Tier 2 (20-75kg)', editable: true },
+  //   { key: 'wholesaleTier3', label: 'Wholesale Price: Tier 3 (1-20kg)', editable: true },
+  // ];
+
+  // // const [visibleColumns, setVisibleColumns] = useState(columns.map(col => col.key));
+  // const [visibleColumns, setVisibleColumns] = useState([
+  //   'coffeeProduct', 'greenCoffeePrice', 'postRoastCost', 'packed1kgCost', 'packed200gCost',
+  //   'markupMultiplier200g', 'retail200gPrice', 'markupMultiplier1kg', 'retail1kgPrice',
+  //   'costPlusPricing', 'markupMultiplierWholesale200g', 'wholesale200gPrice',
+  //   'controller', 'wholesale1kgPrice', 'wholesaleTier1', 'wholesaleTier2', 'wholesaleTier3',
+  // ]);
+  // const [columnWidths, setColumnWidths] = useState({
+  //   'Coffee Product': { width: 200, isResizable: true },
+  //   'Green Coffee Price': { width: 120, isResizable: true },
+  //   'Batch Size': { width: 80, isResizable: true },
+  //   'Weight Loss %': { width: 80, isResizable: true },
+  //   'Post Roast Cost of 1kg': { width: 90, isResizable: true },
+  //   'Label Unit Price': { width: 80, isResizable: true },
+  //   'Packaging Unit Price': { width: 80, isResizable: true },
+  //   'Packed 1kg cost': { width: 120, isResizable: true },
+  //   'Packed 200g cost': { width: 120, isResizable: true },
+  //   'Markup Multiplier for 200g': { width: 80, isResizable: true },
+  //   'Retail 200g price': { width: 90, isResizable: true },
+  //   'Markup Multiplier for 1kg': { width: 80, isResizable: true },
+  //   'Retail 1kg price': { width: 90, isResizable: true },
+  //   'Cost-plus Pricing': { width: 200, isResizable: true },
+  //   'Markup Multiplier for 200g Wholesale': { width: 120, isResizable: true },
+  //   'Wholesale 200g price': { width: 120, isResizable: true },
+  //   'Controller': { width: 100, isResizable: true },
+  //   'Wholesale 1kg List Price': { width: 120, isResizable: true },
+  //   'Wholesale Price: Tier 1 (75KG+)': { width: 120, isResizable: true },
+  //   'Wholesale Price: Tier 2 (20-75kg)': { width: 120, isResizable: true },
+  //   'Wholesale Price: Tier 3 (1-20kg)': { width: 120, isResizable: true },
+  // });
+
+
+  // const columns = [
+  //   { 
+  //     key: 'coffeeProduct', 
+  //     label: 'Coffee Product',
+  //     render: (value, row) => (
+  //       <ClickableProductName onClick={() => handleProductClick(row)}>
+  //         {value}
+  //       </ClickableProductName>
+  //     )
+  //   },
+  //   { key: 'greenCoffeePrice', label: 'Green Coffee Price' },
+  //   { key: 'batchSize', label: 'Batch Size' },
+  //   { key: 'weightLoss', label: 'Weight Loss %' },
+  //   { key: 'postRoastCost', label: 'Post Roast Cost of 1kg' },
+  //   { key: 'labelUnitPrice', label: 'Label Unit Price' },
+  //   { key: 'packagingUnitPrice', label: 'Packaging Unit Price' },
+  //   { key: 'packed1kgCost', label: 'Packed 1kg cost' },
+  //   { key: 'packed200gCost', label: 'Packed 200g cost' },
+  //   // Cost-plus Pricing for Retail 200g is missing here
+  //   { key: 'retailPricing.200g.multiplier200gRetail', label: 'Retail 200g Multiplier', editable: true },
+  //   { key: 'retailPricing.200g.retailPrice200g', label: 'Retail 200g Price', editable: true },
+  //   // Cost-plus Pricing for Retail 1kg is missing here
+  //   { key: 'retailPricing.1kg.multiplier1kgRetail', label: 'Retail 1kg Multiplier', editable: true },
+  //   { key: 'retailPricing.1kg.retailPrice1kg', label: 'Retail 1kg Price', editable: true },
+  //   // Cost-plus Pricing for Wholesale 1kg is missing here
+  //   { key: 'wholesalePricing.200g.multiplier200gWholesale', label: 'Wholesale 200g Multiplier', editable: true },
+  //   { key: 'wholesalePricing.200g.wholesalePrice200g', label: 'Wholesale 200g Price', editable: true },
+  //   {
+  //     key: 'wholesalePricing.1kg.costPlusPricingMethod1kgWholesale',
+  //     label: 'Wholesale Cost-plus Pricing',
+  //     editable: true,
+  //     editor: ({ value, onChange }) => (
+  //       <StyledSelect
+  //         value={value}
+  //         onChange={(e) => onChange(e.target.value)}
+  //       >
+  //         <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+  //         <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+  //         <option value="Desired Profit Margin">Desired Profit Margin</option>
+  //         <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+  //       </StyledSelect>
+  //     )
+  //   },
+  //   {
+  //     key: 'wholesalePricing.1kg.multiplier1kgWholesale',
+  //     label: 'Wholesale 1kg Multiplier',
+  //     editable: true,
+  //     editor: ({ value, onChange }) => {
+  //       return (
+  //         <MultipliersInput
+  //           type="text"
+  //           value={value}
+  //           onChange={(e) => onChange(e.target.value)}
+  //         />
+  //       );
+  //     }
+  //   },
+  //   { key: 'wholesalePricing.1kg.wholesalePrice1kg', label: 'Wholesale 1kg List Price', editable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 1 is missing here
+  //   // Miltiplier for Tier 1 is missing here
+  //   { key: 'wholesalePricing.tier1.wholesalePriceTier1', label: 'Wholesale Price: Tier 1 (75KG+)', editable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 2 is missing here
+  //   // Miltiplier for Tier 2 is missing here
+  //   { key: 'wholesalePricing.tier2.wholesalePriceTier2', label: 'Wholesale Price: Tier 2 (20-75kg)', editable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 3 is missing here
+  //   // Miltiplier for Tier 3 is missing here
+  //   { key: 'wholesalePricing.tier3.wholesalePriceTier3', label: 'Wholesale Price: Tier 3 (1-20kg)', editable: true },
+  // ];
+  
+  // const [visibleColumns, setVisibleColumns] = useState([
+  //   'coffeeProduct', 'greenCoffeePrice', 'postRoastCost', 'packed1kgCost', 'packed200gCost',
+  //   'retailPricing.200g.multiplier200gRetail', 'retailPricing.200g.retailPrice200g',
+  //   'retailPricing.1kg.multiplier1kgRetail', 'retailPricing.1kg.retailPrice1kg',
+  //   'wholesalePricing.1kg.costPlusPricingMethod1kgWholesale',
+  //   'wholesalePricing.200g.multiplier200gWholesale', 'wholesalePricing.200g.wholesalePrice200g',
+  //   'wholesalePricing.1kg.multiplier1kgWholesale', 'wholesalePricing.1kg.wholesalePrice1kg',
+  //   'wholesalePricing.tier1.wholesalePriceTier1', 'wholesalePricing.tier2.wholesalePriceTier2',
+  //   'wholesalePricing.tier3.wholesalePriceTier3',
+  // ]);
+  
+  // const [columnWidths, setColumnWidths] = useState({
+  //   'Coffee Product': { width: 200, isResizable: true },
+  //   'Green Coffee Price': { width: 120, isResizable: true },
+  //   'Batch Size': { width: 80, isResizable: true },
+  //   'Weight Loss %': { width: 80, isResizable: true },
+  //   'Post Roast Cost of 1kg': { width: 90, isResizable: true },
+  //   'Label Unit Price': { width: 80, isResizable: true },
+  //   'Packaging Unit Price': { width: 80, isResizable: true },
+  //   'Packed 1kg cost': { width: 120, isResizable: true },
+  //   'Packed 200g cost': { width: 120, isResizable: true },
+  //   // Cost-plus Pricing for Retail 200g is missing here
+  //   'Retail 200g Multiplier': { width: 80, isResizable: true },
+  //   'Retail 200g Price': { width: 90, isResizable: true },
+  //   // Cost-plus Pricing for Retail 1kg is missing here
+  //   'Retail 1kg Multiplier': { width: 80, isResizable: true },
+  //   'Retail 1kg Price': { width: 90, isResizable: true },
+  //   'Wholesale Cost-plus Pricing': { width: 200, isResizable: true },
+  //   'Wholesale 200g Multiplier': { width: 120, isResizable: true },
+  //   'Wholesale 200g Price': { width: 120, isResizable: true },
+  //   // Cost-plus Pricing for Wholesale 1kg is missing here
+  //   'Wholesale 1kg Multiplier': { width: 100, isResizable: true },
+  //   'Wholesale 1kg List Price': { width: 120, isResizable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 1 is missing here
+  //   // Miltiplier for Tier 1 is missing here
+  //   'Wholesale Price: Tier 1 (75KG+)': { width: 120, isResizable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 2 is missing here
+  //   // Miltiplier for Tier 2 is missing here
+  //   'Wholesale Price: Tier 2 (20-75kg)': { width: 120, isResizable: true },
+  //   // Cost-plus Pricing for Wholesale Tier 3 is missing here
+  //   // Miltiplier for Tier 3 is missing here
+  //   'Wholesale Price: Tier 3 (1-20kg)': { width: 120, isResizable: true },
+  // });
+
+
+  /*
+  const columns = [
+    { 
+      key: 'coffeeProduct', 
+      label: 'Coffee Product',
+      render: (value, row) => (
+        <ClickableProductName onClick={() => handleProductClick(row)}>
+          {value}
+        </ClickableProductName>
+      )
+    },
+    { key: 'greenCoffeePrice', label: 'Green Coffee Price' },
+    { key: 'batchSize', label: 'Batch Size' },
+    { key: 'weightLoss', label: 'Weight Loss %' },
+    { key: 'postRoastCost', label: 'Post Roast Cost of 1kg' },
+    { key: 'labelUnitPrice', label: 'Label Unit Price' },
+    { key: 'packagingUnitPrice', label: 'Packaging Unit Price' },
+    { key: 'packed1kgCost', label: 'Packed 1kg cost' },
+    { key: 'packed200gCost', label: 'Packed 200g cost' },
+    {
+      key: 'retailPricing.200g.costPlusPricingMethod200gRetail',
+      label: 'Retail 200g Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'retailPricing.200g.multiplier200gRetail', label: 'Retail 200g Multiplier', editable: true },
+    { key: 'retailPricing.200g.discountPercentage200gRetail', label: 'Retail 200g Discount %', editable: true },
+    { key: 'retailPricing.200g.retailPrice200g', label: 'Retail 200g Price', editable: true },
+    {
+      key: 'retailPricing.1kg.costPlusPricingMethod1kgRetail',
+      label: 'Retail 1kg Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'retailPricing.1kg.multiplier1kgRetail', label: 'Retail 1kg Multiplier', editable: true },
+    { key: 'retailPricing.1kg.discountPercentage1kgRetail', label: 'Retail 1kg Discount %', editable: true },
+    { key: 'retailPricing.1kg.retailPrice1kg', label: 'Retail 1kg Price', editable: true },
+    {
+      key: 'wholesalePricing.200g.costPlusPricingMethod200gWholesale',
+      label: 'Wholesale 200g Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'wholesalePricing.200g.multiplier200gWholesale', label: 'Wholesale 200g Multiplier', editable: true },
+    { key: 'wholesalePricing.200g.discountPercentage200gWholesale', label: 'Wholesale 200g Discount %', editable: true },
+    { key: 'wholesalePricing.200g.wholesalePrice200g', label: 'Wholesale 200g Price', editable: true },
+    {
+      key: 'wholesalePricing.1kg.costPlusPricingMethod1kgWholesale',
+      label: 'Wholesale 1kg Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'wholesalePricing.1kg.multiplier1kgWholesale', label: 'Wholesale 1kg Multiplier', editable: true },
+    { key: 'wholesalePricing.1kg.discountPercentage1kgWholesale', label: 'Wholesale 1kg Discount %', editable: true },
+    { key: 'wholesalePricing.1kg.wholesalePrice1kg', label: 'Wholesale 1kg List Price', editable: true },
+    {
+      key: 'wholesalePricing.tier1.costPlusPricingMethodTier1Wholesale',
+      label: 'Wholesale Tier 1 Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'wholesalePricing.tier1.multiplierTier1Wholesale', label: 'Wholesale Tier 1 Multiplier', editable: true },
+    { key: 'wholesalePricing.tier1.discountPercentageTier1Wholesale', label: 'Wholesale Tier 1 Discount %', editable: true },
+    { key: 'wholesalePricing.tier1.wholesalePriceTier1', label: 'Wholesale Price: Tier 1 (75KG+)', editable: true },
+    {
+      key: 'wholesalePricing.tier2.costPlusPricingMethodTier2Wholesale',
+      label: 'Wholesale Tier 2 Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'wholesalePricing.tier2.multiplierTier2Wholesale', label: 'Wholesale Tier 2 Multiplier', editable: true },
+    { key: 'wholesalePricing.tier2.discountPercentageTier2Wholesale', label: 'Wholesale Tier 2 Discount %', editable: true },
+    { key: 'wholesalePricing.tier2.wholesalePriceTier2', label: 'Wholesale Price: Tier 2 (20-75kg)', editable: true },
+    {
+      key: 'wholesalePricing.tier3.costPlusPricingMethodTier3Wholesale',
+      label: 'Wholesale Tier 3 Cost-plus Pricing',
+      editable: true,
+      editor: ({ value, onChange }) => (
+        <StyledSelect
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          <option value="Fixed Percentage Markup">Fixed Percentage Markup</option>
+          <option value="Fixed Amount Markup">Fixed Amount Markup</option>
+          <option value="Desired Profit Margin">Desired Profit Margin</option>
+          <option value="Keystone Pricing (100% Markup)">Keystone Pricing (100% Markup)</option>
+        </StyledSelect>
+      )
+    },
+    { key: 'wholesalePricing.tier3.multiplierTier3Wholesale', label: 'Wholesale Tier 3 Multiplier', editable: true },
+    { key: 'wholesalePricing.tier3.discountPercentageTier3Wholesale', label: 'Wholesale Tier 3 Discount %', editable: true },
+    { key: 'wholesalePricing.tier3.wholesalePriceTier3', label: 'Wholesale Price: Tier 3 (1-20kg)', editable: true },
+  ];
+  */
+
   const columns = [
     { 
       key: 'coffeeProduct', 
@@ -77,7 +441,6 @@ const PricesCalculator = () => {
       )
     },
     { key: 'greenCoffeePrice', label: 'Green Coffee Price' },
-    { key: "deliveryCost", label: "Delivery Cost"},
     { key: 'batchSize', label: 'Batch Size' },
     { key: 'weightLoss', label: 'Weight Loss %' },
     { key: 'postRoastCost', label: 'Post Roast Cost of 1kg' },
@@ -226,10 +589,10 @@ const PricesCalculator = () => {
       render: (value, row) => row.wholesalePricing?.['1kg']?.wholesalePrice1kg
     },
     {
-      key: 'wholesalePricing.Tier1.costPlusPricingMethodTier1Wholesale',
+      key: 'wholesalePricing.tier1.costPlusPricingMethodTier1Wholesale',
       label: 'Wholesale Tier 1 Cost-plus Pricing',
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier1?.costPlusPricingMethodTier1Wholesale,
+      render: (value, row) => row.wholesalePricing?.tier1?.costPlusPricingMethodTier1Wholesale,
       editor: ({ value, onChange }) => (
         <StyledSelect
           value={value}
@@ -243,28 +606,28 @@ const PricesCalculator = () => {
       )
     },
     { 
-      key: 'wholesalePricing.Tier1.multiplierTier1Wholesale', 
+      key: 'wholesalePricing.tier1.multiplierTier1Wholesale', 
       label: 'Wholesale Tier 1 Multiplier', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier1?.multiplierTier1Wholesale
+      render: (value, row) => row.wholesalePricing?.tier1?.multiplierTier1Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier1.discountPercentageTier1Wholesale', 
+      key: 'wholesalePricing.tier1.discountPercentageTier1Wholesale', 
       label: 'Wholesale Tier 1 Discount %', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier1?.discountPercentageTier1Wholesale
+      render: (value, row) => row.wholesalePricing?.tier1?.discountPercentageTier1Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier1.wholesalePriceTier1', 
+      key: 'wholesalePricing.tier1.wholesalePriceTier1', 
       label: 'Wholesale Price: Tier 1 (75KG+)', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier1?.wholesalePriceTier1
+      render: (value, row) => row.wholesalePricing?.tier1?.wholesalePriceTier1
     },
     {
-      key: 'wholesalePricing.Tier2.costPlusPricingMethodTier2Wholesale',
+      key: 'wholesalePricing.tier2.costPlusPricingMethodTier2Wholesale',
       label: 'Wholesale Tier 2 Cost-plus Pricing',
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier2?.costPlusPricingMethodTier2Wholesale,
+      render: (value, row) => row.wholesalePricing?.tier2?.costPlusPricingMethodTier2Wholesale,
       editor: ({ value, onChange }) => (
         <StyledSelect
           value={value}
@@ -278,28 +641,28 @@ const PricesCalculator = () => {
       )
     },
     { 
-      key: 'wholesalePricing.Tier2.multiplierTier2Wholesale', 
+      key: 'wholesalePricing.tier2.multiplierTier2Wholesale', 
       label: 'Wholesale Tier 2 Multiplier', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier2?.multiplierTier2Wholesale
+      render: (value, row) => row.wholesalePricing?.tier2?.multiplierTier2Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier2.discountPercentageTier2Wholesale', 
+      key: 'wholesalePricing.tier2.discountPercentageTier2Wholesale', 
       label: 'Wholesale Tier 2 Discount %', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier2?.discountPercentageTier2Wholesale
+      render: (value, row) => row.wholesalePricing?.tier2?.discountPercentageTier2Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier2.wholesalePriceTier2', 
+      key: 'wholesalePricing.tier2.wholesalePriceTier2', 
       label: 'Wholesale Price: Tier 2 (20-75kg)', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier2?.wholesalePriceTier2
+      render: (value, row) => row.wholesalePricing?.tier2?.wholesalePriceTier2
     },
     {
-      key: 'wholesalePricing.Tier3.costPlusPricingMethodTier3Wholesale',
+      key: 'wholesalePricing.tier3.costPlusPricingMethodTier3Wholesale',
       label: 'Wholesale Tier 3 Cost-plus Pricing',
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier3?.costPlusPricingMethodTier3Wholesale,
+      render: (value, row) => row.wholesalePricing?.tier3?.costPlusPricingMethodTier3Wholesale,
       editor: ({ value, onChange }) => (
         <StyledSelect
           value={value}
@@ -313,27 +676,27 @@ const PricesCalculator = () => {
       )
     },
     { 
-      key: 'wholesalePricing.Tier3.multiplierTier3Wholesale', 
+      key: 'wholesalePricing.tier3.multiplierTier3Wholesale', 
       label: 'Wholesale Tier 3 Multiplier', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier3?.multiplierTier3Wholesale
+      render: (value, row) => row.wholesalePricing?.tier3?.multiplierTier3Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier3.discountPercentageTier3Wholesale', 
+      key: 'wholesalePricing.tier3.discountPercentageTier3Wholesale', 
       label: 'Wholesale Tier 3 Discount %', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier3?.discountPercentageTier3Wholesale
+      render: (value, row) => row.wholesalePricing?.tier3?.discountPercentageTier3Wholesale
     },
     { 
-      key: 'wholesalePricing.Tier3.wholesalePriceTier3', 
+      key: 'wholesalePricing.tier3.wholesalePriceTier3', 
       label: 'Wholesale Price: Tier 3 (1-20kg)', 
       editable: true,
-      render: (value, row) => row.wholesalePricing?.Tier3?.wholesalePriceTier3
+      render: (value, row) => row.wholesalePricing?.tier3?.wholesalePriceTier3
     },
   ];
   
   const [visibleColumns, setVisibleColumns] = useState([
-    "coffeeProduct", "greenCoffeePrice", "deliveryCost", "postRoastCost", "packed1kgCost", "packed200gCost",
+    "coffeeProduct", "greenCoffeePrice", "postRoastCost", "packed1kgCost", "packed200gCost",
     "retailPricing.200g.costPlusPricingMethod200gRetail",
     "retailPricing.200g.multiplier200gRetail",
     "retailPricing.200g.discountPercentage200gRetail", // Added
@@ -350,24 +713,23 @@ const PricesCalculator = () => {
     "wholesalePricing.1kg.multiplier1kgWholesale",
     "wholesalePricing.1kg.discountPercentage1kgWholesale", // Added
     "wholesalePricing.1kg.wholesalePrice1kg",
-    "wholesalePricing.Tier1.costPlusPricingMethodTier1Wholesale",
-    "wholesalePricing.Tier1.multiplierTier1Wholesale",
-    "wholesalePricing.Tier1.discountPercentageTier1Wholesale", // Added
-    "wholesalePricing.Tier1.wholesalePriceTier1",
-    "wholesalePricing.Tier2.costPlusPricingMethodTier2Wholesale",
-    "wholesalePricing.Tier2.multiplierTier2Wholesale",
-    "wholesalePricing.Tier2.discountPercentageTier2Wholesale", // Added
-    "wholesalePricing.Tier2.wholesalePriceTier2",
-    "wholesalePricing.Tier3.costPlusPricingMethodTier3Wholesale",
-    "wholesalePricing.Tier3.multiplierTier3Wholesale",
-    "wholesalePricing.Tier3.discountPercentageTier3Wholesale", // Added
-    "wholesalePricing.Tier3.wholesalePriceTier3",
+    "wholesalePricing.tier1.costPlusPricingMethodTier1Wholesale",
+    "wholesalePricing.tier1.multiplierTier1Wholesale",
+    "wholesalePricing.tier1.discountPercentageTier1Wholesale", // Added
+    "wholesalePricing.tier1.wholesalePriceTier1",
+    "wholesalePricing.tier2.costPlusPricingMethodTier2Wholesale",
+    "wholesalePricing.tier2.multiplierTier2Wholesale",
+    "wholesalePricing.tier2.discountPercentageTier2Wholesale", // Added
+    "wholesalePricing.tier2.wholesalePriceTier2",
+    "wholesalePricing.tier3.costPlusPricingMethodTier3Wholesale",
+    "wholesalePricing.tier3.multiplierTier3Wholesale",
+    "wholesalePricing.tier3.discountPercentageTier3Wholesale", // Added
+    "wholesalePricing.tier3.wholesalePriceTier3",
   ]);
   
   const [columnWidths, setColumnWidths] = useState({
     'Coffee Product': { width: 200, isResizable: true },
     'Green Coffee Price': { width: 120, isResizable: true },
-    'Delivery Cost': { width: 100, isResizable: false},
     'Batch Size': { width: 80, isResizable: true },
     'Weight Loss %': { width: 80, isResizable: true },
     'Post Roast Cost of 1kg': { width: 90, isResizable: true },
@@ -470,6 +832,22 @@ const PricesCalculator = () => {
 
   ////////////////////////////////////////////////////////////////////////////////////////////////
 
+  /*
+  // v.1
+  // The debounced function is defined outside of this component to avoid re-creating it on every render
+  const debouncedUpdateBackend = debounce(async (payload, rowIndex, updatedData, setTableData) => {
+    try {
+        const response = await updateBackend(payload);
+        if (response && response.data) {
+            updatedData[rowIndex] = { ...updatedData[rowIndex], ...response.data };
+            setTableData([...updatedData]);
+        }
+    } catch (error) {
+        console.error(`Failed to update cell: ${error.message}`);
+        // Optionally handle reverting data on error here if needed
+    }
+  }, 300); // 300 ms delay
+  */
 
   // v.3
   const debouncedUpdateBackend = debounce(async (payload, rowIndex, updatedData, setTableData) => {
@@ -517,6 +895,140 @@ const PricesCalculator = () => {
     return target;
   }
 
+  /*
+  // v.1
+  const handleCellEdit = async (rowIndex, columnKey, value) => {
+    setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
+    const updatedData = [...tableData];
+    const rowData = updatedData[rowIndex];
+    
+    rowData[columnKey] = value; // Optimistic update for immediate feedback
+    setTableData([...updatedData]);
+
+    const payload = { 
+        id: rowData.id, 
+        [columnKey]: value, 
+        packed1kgCost: rowData.packed1kgCost, 
+        costPlusPricing: rowData.costPlusPricing 
+    };
+
+    if (columnKey === 'costPlusPricing') {
+      let defaultControllerValue;
+      switch (value) {
+        case 'Fixed Percentage Markup':
+        case 'Desired Profit Margin':
+          defaultControllerValue = '0.20';
+          break;
+        case 'Fixed Amount Markup':
+          defaultControllerValue = '5';
+          break;
+        case 'Keystone Pricing (100% Markup)':
+          defaultControllerValue = '1';
+          break;
+        default:
+          defaultControllerValue = '';
+      }
+      payload.controller = defaultControllerValue;
+    } else if (columnKey === 'wholesale1kgPrice' || columnKey === 'controller') {
+        payload.recalculateWholesale = true;
+    }
+
+    // Use debounced function to handle backend updates
+    debouncedUpdateBackend(payload, rowIndex, updatedData, setTableData);
+
+    setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
+  };
+  */
+
+  /*
+  // v.2
+  const handleCellEdit = async (rowIndex, columnKey, value) => {
+    setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: true }));
+    const updatedData = [...tableData];
+    const rowData = updatedData[rowIndex];
+    
+    // Update the specific field
+    if (columnKey.includes('.')) {
+      const [category, subCategory, field] = columnKey.split('.');
+      rowData[category] = rowData[category] || {};
+      rowData[category][subCategory] = rowData[category][subCategory] || {};
+      rowData[category][subCategory][field] = value;
+    } else {
+      rowData[columnKey] = value;
+    }
+  
+    // Optimistic update for immediate feedback
+    setTableData([...updatedData]);
+  
+    const payload = { 
+      id: rowData.id, 
+      packed1kgCost: rowData.packed1kgCost,
+      packed200gCost: rowData.packed200gCost,
+    };
+  
+    // Add the updated field to the payload
+    if (columnKey.includes('.')) {
+      const [category, subCategory, field] = columnKey.split('.');
+      payload[category] = payload[category] || {};
+      payload[category][subCategory] = payload[category][subCategory] || {};
+      payload[category][subCategory][field] = value;
+    } else {
+      payload[columnKey] = value;
+    }
+  
+    // Handle cost-plus pricing method changes for all categories
+    const pricingCategories = [
+      { key: 'retailPricing.200g', method: 'costPlusPricingMethod200gRetail', multiplier: 'multiplier200gRetail' },
+      { key: 'retailPricing.1kg', method: 'costPlusPricingMethod1kgRetail', multiplier: 'multiplier1kgRetail' },
+      { key: 'wholesalePricing.200g', method: 'costPlusPricingMethod200gWholesale', multiplier: 'multiplier200gWholesale' },
+      { key: 'wholesalePricing.1kg', method: 'costPlusPricingMethod1kgWholesale', multiplier: 'multiplier1kgWholesale' },
+      { key: 'wholesalePricing.tier1', method: 'costPlusPricingMethodTier1Wholesale', multiplier: 'multiplierTier1Wholesale' },
+      { key: 'wholesalePricing.tier2', method: 'costPlusPricingMethodTier2Wholesale', multiplier: 'multiplierTier2Wholesale' },
+      { key: 'wholesalePricing.tier3', method: 'costPlusPricingMethodTier3Wholesale', multiplier: 'multiplierTier3Wholesale' },
+    ];
+  
+    for (const category of pricingCategories) {
+      if (columnKey === `${category.key}.${category.method}`) {
+        let defaultMultiplier;
+        switch (value) {
+          case 'Fixed Percentage Markup':
+          case 'Desired Profit Margin':
+            defaultMultiplier = '0.20';
+            break;
+          case 'Fixed Amount Markup':
+            defaultMultiplier = '5';
+            break;
+          case 'Keystone Pricing (100% Markup)':
+            defaultMultiplier = '1';
+            break;
+          default:
+            defaultMultiplier = '';
+        }
+        const [mainCategory, subCategory] = category.key.split('.');
+        payload[mainCategory] = payload[mainCategory] || {};
+        payload[mainCategory][subCategory] = payload[mainCategory][subCategory] || {};
+        payload[mainCategory][subCategory][category.multiplier] = defaultMultiplier;
+        payload.recalculatePricing = mainCategory;
+        break;
+      }
+    }
+  
+    // Trigger recalculation for price or multiplier changes
+    for (const category of pricingCategories) {
+      const [mainCategory, subCategory] = category.key.split('.');
+      const priceField = mainCategory === 'retailPricing' ? `retailPrice${subCategory}` : `wholesalePrice${subCategory}`;
+      if (columnKey === `${category.key}.${priceField}` || columnKey === `${category.key}.${category.multiplier}`) {
+        payload.recalculatePricing = mainCategory;
+        break;
+      }
+    }
+  
+    // Use debounced function to handle backend updates
+    debouncedUpdateBackend(payload, rowIndex, updatedData, setTableData);
+  
+    setUpdatingCells(prev => ({ ...prev, [`${rowIndex}-${columnKey}`]: false }));
+  };
+  */
 
   // v.3
   const handleCellEdit = async (rowIndex, columnKey, value) => {
@@ -557,9 +1069,9 @@ const PricesCalculator = () => {
       { key: 'retailPricing.1kg', method: 'costPlusPricingMethod1kgRetail', multiplier: 'multiplier1kgRetail' },
       { key: 'wholesalePricing.200g', method: 'costPlusPricingMethod200gWholesale', multiplier: 'multiplier200gWholesale' },
       { key: 'wholesalePricing.1kg', method: 'costPlusPricingMethod1kgWholesale', multiplier: 'multiplier1kgWholesale' },
-      { key: 'wholesalePricing.Tier1', method: 'costPlusPricingMethodTier1Wholesale', multiplier: 'multiplierTier1Wholesale' },
-      { key: 'wholesalePricing.Tier2', method: 'costPlusPricingMethodTier2Wholesale', multiplier: 'multiplierTier2Wholesale' },
-      { key: 'wholesalePricing.Tier3', method: 'costPlusPricingMethodTier3Wholesale', multiplier: 'multiplierTier3Wholesale' },
+      { key: 'wholesalePricing.tier1', method: 'costPlusPricingMethodTier1Wholesale', multiplier: 'multiplierTier1Wholesale' },
+      { key: 'wholesalePricing.tier2', method: 'costPlusPricingMethodTier2Wholesale', multiplier: 'multiplierTier2Wholesale' },
+      { key: 'wholesalePricing.tier3', method: 'costPlusPricingMethodTier3Wholesale', multiplier: 'multiplierTier3Wholesale' },
     ];
   
     for (const category of pricingCategories) {
@@ -607,6 +1119,23 @@ const PricesCalculator = () => {
   };
 
 
+  /*
+  // v.1
+  const updateBackend = async (rowData) => {
+    try {
+      if (!rowData.id) {
+        throw new Error('No ID provided for update');
+      }
+      const response = await axios.put(`/api/prices-calculator/${rowData.id}`, rowData);
+      // return response; // Return the entire response object
+      return response.data; // This should contain the updated row data
+    } catch (error) {
+      console.error('Error in updateBackend:', error.response ? error.response.data : error.message);
+      throw new Error(`Failed to update backend: ${error.message}`);
+    }
+  };
+  */
+
   // v.2
   const updateBackend = async (rowData) => {
     try {
@@ -645,6 +1174,29 @@ const PricesCalculator = () => {
     setSelectedProduct(product);
   };
 
+  /*
+  // v.3
+  const handleSaveProduct = async (updatedProduct) => {
+    try {
+      console.log('handleSaveProduct called with:', updatedProduct);
+      if (!updatedProduct.id) {
+        throw new Error('Product ID is missing');
+      }
+      const response = await axios.put(`/api/prices-calculator/${updatedProduct.id}`, updatedProduct);
+      console.log('API response:', response.data);
+      if (response.data && response.data.data) {
+        const updatedData = tableData.map(item => 
+          item.id === updatedProduct.id ? response.data.data : item
+        );
+        setTableData(updatedData);
+        setSelectedProduct(null);
+      }
+    } catch (error) {
+      console.error('Error updating product:', error);
+      setError('Failed to update product');
+    }
+  };
+  */
 
   // v.4
   const handleSaveProduct = async (updatedProduct) => {
@@ -838,9 +1390,44 @@ const PricesCalculator = () => {
                       </tr>
                     </thead>
 
+                    {/* <tbody>
+                      {sortedData.map((item, rowIndex) => {
+                        console.log('Rendering row:', item);
+                        return (
+                        <ItemRow key={item.id || rowIndex} even={rowIndex % 2 === 0}>
+                          <Td style={{ width: '30px' }}>
+                            <input
+                              type="checkbox"
+                              checked={selectedRows[item.id] || false}
+                              onChange={() => handleCheckboxChange(item.id)}
+                            />
+                          </Td>
+                          {visibleColumns.map(columnKey => {
+                            const column = columns.find(col => col.key === columnKey);
+                            console.log('Rendering column:', columnKey, 'with value:', item[columnKey]);
+                            return (
+                              <Td key={columnKey} style={{ width: columnWidths[column.label] ? `${columnWidths[column.label].width}px` : 'auto' }}>
+                                {column.render ? column.render(item[columnKey], item) : column.editable ? (
+                                  <EditableCell
+                                    value={item[columnKey]}
+                                    onValueChange={(value) => handleCellEdit(rowIndex, columnKey, value)}
+                                    isUpdating={updatingCells[`${rowIndex}-${columnKey}`]}
+                                    editor={column.editor}
+                                  />
+                                ) : (
+                                  item[columnKey]
+                                )}
+                              </Td>
+                            );
+                          })}
+                        </ItemRow>
+                        );
+                      })}
+                    </tbody> */}
+
                     <tbody>
                       {sortedData.map((item, rowIndex) => {
-                        // console.log('Rendering row:', item);
+                        console.log('Rendering row:', item);
                         return (
                           <ItemRow key={item.id || rowIndex} even={rowIndex % 2 === 0}>
                             <Td style={{ width: '30px' }}>
@@ -852,7 +1439,7 @@ const PricesCalculator = () => {
                             </Td>
                             {visibleColumns.map(columnKey => {
                               const column = columns.find(col => col.key === columnKey);
-                              // console.log('Rendering column:', columnKey, 'with value:', column.render ? column.render(null, item) : item[columnKey]);
+                              console.log('Rendering column:', columnKey, 'with value:', column.render ? column.render(null, item) : item[columnKey]);
                               return (
                                 <Td key={columnKey} style={{ width: columnWidths[column.label] ? `${columnWidths[column.label].width}px` : 'auto' }}>
                                   {column.render ? column.render(null, item) : column.editable ? (

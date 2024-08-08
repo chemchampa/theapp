@@ -991,7 +991,7 @@ async function getSKU(tenantId, organizationId, productName, productType) {
 }
 
 
-////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////*     PRICES CALCULATOR ▼ ▼ ▼     //////////////////////*/
 
 /*
   With this approach the product data is inserted into the correct columns at the beginning,
@@ -1011,7 +1011,7 @@ async function appendProductToPricesCalculator(tenantId, organizationId, product
     // First, get the current data to determine the next row number
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'Prices Calculator!A:W', // Include all columns up to W (added two new columns)
+      range: 'Prices Calculator!A:AN', // Include all columns up to AN
     });
 
     const rows = response.data.values || [];
@@ -1031,7 +1031,7 @@ async function appendProductToPricesCalculator(tenantId, organizationId, product
     
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: 'Prices Calculator!A:W', // Include all columns up to W
+      range: 'Prices Calculator!A:AN', // Include all columns up to AN
       valueInputOption: 'USER_ENTERED',
       resource: { values },
     });
@@ -1044,6 +1044,8 @@ async function appendProductToPricesCalculator(tenantId, organizationId, product
   }
 }
 
+/*
+// v.1
 exports.getPricesCalculatorData = async (tenantId, organizationId) => {
   console.log('getPricesCalculatorData called with:', { tenantId, organizationId });
   if (!tenantId || !organizationId) {
@@ -1109,7 +1111,117 @@ exports.getPricesCalculatorData = async (tenantId, organizationId) => {
     throw error;
   }
 };
+*/
 
+// v.2
+exports.getPricesCalculatorData = async (tenantId, organizationId) => {
+  console.log('getPricesCalculatorData called with:', { tenantId, organizationId });
+  if (!tenantId || !organizationId) {
+    throw new Error(`Invalid tenantId or organizationId: tenantId=${tenantId}, organizationId=${organizationId}`);
+  }
+
+  try {
+    const sheets = google.sheets({ version: 'v4', auth: await getAuthClient() });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'COFFEE_PRICES');
+
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Prices Calculator!A1:AN', // Extend the range to include all new columns and include headers (row 1)
+    });
+
+    const rows = response.data.values;
+    if (!rows || rows.length === 0) {
+      console.log('No data found in the sheet');
+      return [];
+    }
+
+    const [headers, ...dataRows] = rows;
+
+    // console.log('Headers:', headers);
+    // console.log('First data row:', dataRows[0]);
+
+    const processedData = dataRows.map((row, index) => {
+      const product = {
+        coffeeProduct: row[0],
+        greenCoffeePrice: row[1],
+        deliveryCost: row[2],
+
+        batchSize: row[3],
+        weightLoss: row[4],
+        postRoastCost: row[5],
+        labelUnitPrice: row[6],
+        packagingUnitPrice: row[7],
+        packed1kgCost: row[8],
+        packed200gCost: row[9],
+        
+        retailPricing: {
+          '200g': {
+            costPlusPricingMethod200gRetail: row[10],
+            multiplier200gRetail: row[11],
+            discountPercentage200gRetail: row[12],
+            retailPrice200g: row[13],
+          },
+          '1kg': {
+            costPlusPricingMethod1kgRetail: row[14],
+            multiplier1kgRetail: row[15],
+            discountPercentage1kgRetail: row[16],
+            retailPrice1kg: row[17],
+          },
+        },
+        
+        wholesalePricing: {
+          '200g': {
+            costPlusPricingMethod200gWholesale: row[18],
+            multiplier200gWholesale: row[19],
+            discountPercentage200gWholesale: row[20],
+            wholesalePrice200g: row[21],
+          },
+          '1kg': {
+            costPlusPricingMethod1kgWholesale: row[22],
+            multiplier1kgWholesale: row[23],
+            discountPercentage1kgWholesale: row[24],
+            wholesalePrice1kg: row[25],
+          },
+          Tier1: {
+            costPlusPricingMethodTier1Wholesale: row[26],
+            multiplierTier1Wholesale: row[27],
+            discountPercentageTier1Wholesale: row[28],
+            wholesalePriceTier1: row[29],
+          },
+          Tier2: {
+            costPlusPricingMethodTier2Wholesale: row[30],
+            multiplierTier2Wholesale: row[31],
+            discountPercentageTier2Wholesale: row[32],
+            wholesalePriceTier2: row[33],
+          },
+          Tier3: {
+            costPlusPricingMethodTier3Wholesale: row[34],
+            multiplierTier3Wholesale: row[35],
+            discountPercentageTier3Wholesale: row[36],
+            wholesalePriceTier3: row[37],
+          },
+        },
+        
+        test: row[38],
+        id: row[39], // Use the last column for ID
+      };
+      
+      // console.log(`Processing product ${index}. ID:`, product.id);
+      return product;
+    });
+
+    // console.log('Processed data:', processedData);
+
+    return processedData;
+  } catch (error) {
+    console.error('Error fetching prices calculator data:', error);
+    throw error;
+  }
+};
+
+
+/*
+// v.1
 async function updateProductInPricesCalculator(tenantId, organizationId, id, updatedData) {
   console.log('updateProductInPricesCalculator called with:', { tenantId, organizationId });
 
@@ -1188,6 +1300,245 @@ async function updateProductInPricesCalculator(tenantId, organizationId, id, upd
     throw error;
   }
 }
+*/
+
+/* v.2
+  I updated in this function the `updatedRow` array to include all the new fields for retail and wholesale pricing, including
+  the cost-plus pricing methods, multipliers, discount percentages, and calculated prices for each category.
+*/
+/*
+async function updateProductInPricesCalculator(tenantId, organizationId, id, updatedData) {
+  console.log('updateProductInPricesCalculator called with:', { tenantId, organizationId });
+
+  if (!tenantId || !organizationId) {
+    throw new Error(`Invalid tenantId or organizationId: tenantId=${tenantId}, organizationId=${organizationId}`);
+  }
+
+  try {
+    const auth = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'COFFEE_PRICES');
+
+    // Get the current data to find the row index
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Prices Calculator!A:AM', // Adjust the range to include new columns
+    });
+
+    const rows = response.data.values;
+    // Find the row index based on the ID in the last column (AM)
+    const rowIndex = rows.findIndex(row => row[row.length - 1] === id);
+
+    if (rowIndex === -1) {
+      console.error('Product not found. Available IDs:', rows.map(row => row[row.length - 1]));
+      throw new Error(`Product with ID ${id} not found`);
+    }
+
+    console.log('Found product at row index:', rowIndex);
+
+    // Prepare the updated row data
+    const updatedRow = [
+      updatedData.coffeeProduct,
+      updatedData.greenCoffeePrice,
+      updatedData.batchSize,
+      updatedData.weightLoss,
+      updatedData.postRoastCost,
+      updatedData.labelUnitPrice,
+      updatedData.packagingUnitPrice,
+      updatedData.packed1kgCost,
+      updatedData.packed200gCost,
+      
+      // Retail pricing for 200g
+      updatedData.retailPricing['200g'].costPlusPricingMethod200gRetail,
+      updatedData.retailPricing['200g'].multiplier200gRetail,
+      updatedData.retailPricing['200g'].discountPercentage200gRetail,
+      updatedData.retailPricing['200g'].retailPrice200g,
+      
+      // Retail pricing for 1kg
+      updatedData.retailPricing['1kg'].costPlusPricingMethod1kgRetail,
+      updatedData.retailPricing['1kg'].multiplier1kgRetail,
+      updatedData.retailPricing['1kg'].discountPercentage1kgRetail,
+      updatedData.retailPricing['1kg'].retailPrice1kg,
+      
+      // Wholesale 200g
+      updatedData.wholesalePricing['200g'].costPlusPricingMethod200gWholesale,
+      updatedData.wholesalePricing['200g'].multiplier200gWholesale,
+      updatedData.wholesalePricing['200g'].discountPercentage200gWholesale,
+      updatedData.wholesalePricing['200g'].wholesalePrice200g,
+      
+      // Wholesale 1kg (List Price)
+      updatedData.wholesalePricing['1kg'].costPlusPricingMethod1kgWholesale,
+      updatedData.wholesalePricing['1kg'].multiplier1kgWholesale,
+      updatedData.wholesalePricing['1kg'].discountPercentage1kgWholesale,
+      updatedData.wholesalePricing['1kg'].wholesalePrice1kg,
+      
+      // Wholesale Tier 1 (75KG+)
+      updatedData.wholesalePricing.tier1.costPlusPricingMethodTier1Wholesale,
+      updatedData.wholesalePricing.tier1.multiplierTier1Wholesale,
+      updatedData.wholesalePricing.tier1.discountPercentageTier1Wholesale,
+      updatedData.wholesalePricing.tier1.wholesalePriceTier1,
+      
+      // Wholesale Tier 2 (20-75kg)
+      updatedData.wholesalePricing.tier2.costPlusPricingMethodTier2Wholesale,
+      updatedData.wholesalePricing.tier2.multiplierTier2Wholesale,
+      updatedData.wholesalePricing.tier2.discountPercentageTier2Wholesale,
+      updatedData.wholesalePricing.tier2.wholesalePriceTier2,
+      
+      // Wholesale Tier 3 (1-20kg)
+      updatedData.wholesalePricing.tier3.costPlusPricingMethodTier3Wholesale,
+      updatedData.wholesalePricing.tier3.multiplierTier3Wholesale,
+      updatedData.wholesalePricing.tier3.discountPercentageTier3Wholesale,
+      updatedData.wholesalePricing.tier3.wholesalePriceTier3,
+      
+      updatedData.test,
+      // Note: We don't include the ID here as it shouldn't be updated
+    ];
+
+    console.log('Updated row data:', JSON.stringify(updatedRow, null, 2));
+
+    // Update the specific row
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `Prices Calculator!A${rowIndex + 1}:AM${rowIndex + 1}`, // Include all columns up to W; +1 because sheets are 1-indexed
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [updatedRow],
+      },
+    });
+
+    console.log(`Updated row ${rowIndex + 1} in Prices Calculator sheet`);
+
+    // Return the updated data
+    return {
+      id,
+      ...updatedData
+    };
+  } catch (error) {
+    console.error('Error updating product in Prices Calculator:', error);
+    throw error;
+  }
+}
+*/
+
+/* v.3
+  I updated in this function the `updatedRow` array to include all the new fields for retail and wholesale pricing, including
+  the cost-plus pricing methods, multipliers, discount percentages, and calculated prices for each category.
+*/
+async function updateProductInPricesCalculator(tenantId, organizationId, id, mergedData) {
+  console.log('updateProductInPricesCalculator called with:', { tenantId, organizationId });
+
+  if (!tenantId || !organizationId) {
+    throw new Error(`Invalid tenantId or organizationId: tenantId=${tenantId}, organizationId=${organizationId}`);
+  }
+
+  try {
+    const auth = await getAuthClient();
+    const sheets = google.sheets({ version: 'v4', auth });
+    const spreadsheetId = await getSpreadsheetId(tenantId, organizationId, 'COFFEE_PRICES');
+
+    // Get the current data to find the row index
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId,
+      range: 'Prices Calculator!A:AN', // Adjust the range to include new columns
+    });
+
+    const rows = response.data.values;
+    // Find the row index based on the ID in the last column (AN)
+    const rowIndex = rows.findIndex(row => row[row.length - 1] === id);
+
+    if (rowIndex === -1) {
+      console.error('Product not found. Available IDs:', rows.map(row => row[row.length - 1]));
+      throw new Error(`Product with ID ${id} not found`);
+    }
+
+    console.log('Found product at row index:', rowIndex);
+
+    console.log('mergedData before creating updatedRow:', JSON.stringify(mergedData, null, 2));
+
+    // Prepare the updated row data
+    const updatedRow = [
+      mergedData.coffeeProduct,
+      mergedData.greenCoffeePrice,
+      mergedData.deliveryCost,
+      mergedData.batchSize,
+      mergedData.weightLoss,
+      mergedData.postRoastCost,
+      mergedData.labelUnitPrice,
+      mergedData.packagingUnitPrice,
+      mergedData.packed1kgCost,
+      mergedData.packed200gCost,
+      
+      // Retail pricing for 200g
+      mergedData.retailPricing['200g'].costPlusPricingMethod200gRetail,
+      mergedData.retailPricing['200g'].multiplier200gRetail,
+      mergedData.retailPricing['200g'].discountPercentage200gRetail,
+      mergedData.retailPricing['200g'].retailPrice200g,
+      
+      // Retail pricing for 1kg
+      mergedData.retailPricing['1kg'].costPlusPricingMethod1kgRetail,
+      mergedData.retailPricing['1kg'].multiplier1kgRetail,
+      mergedData.retailPricing['1kg'].discountPercentage1kgRetail,
+      mergedData.retailPricing['1kg'].retailPrice1kg,
+      
+      // Wholesale 200g
+      mergedData.wholesalePricing['200g'].costPlusPricingMethod200gWholesale,
+      mergedData.wholesalePricing['200g'].multiplier200gWholesale,
+      mergedData.wholesalePricing['200g'].discountPercentage200gWholesale,
+      mergedData.wholesalePricing['200g'].wholesalePrice200g,
+      
+      // Wholesale 1kg (List Price)
+      mergedData.wholesalePricing['1kg'].costPlusPricingMethod1kgWholesale,
+      mergedData.wholesalePricing['1kg'].multiplier1kgWholesale,
+      mergedData.wholesalePricing['1kg'].discountPercentage1kgWholesale,
+      mergedData.wholesalePricing['1kg'].wholesalePrice1kg,
+      
+      // Wholesale Tier 1 (75KG+)
+      mergedData.wholesalePricing.Tier1.costPlusPricingMethodTier1Wholesale,
+      mergedData.wholesalePricing.Tier1.multiplierTier1Wholesale,
+      mergedData.wholesalePricing.Tier1.discountPercentageTier1Wholesale,
+      mergedData.wholesalePricing.Tier1.wholesalePriceTier1,
+      
+      // Wholesale Tier 2 (20-75kg)
+      mergedData.wholesalePricing.Tier2.costPlusPricingMethodTier2Wholesale,
+      mergedData.wholesalePricing.Tier2.multiplierTier2Wholesale,
+      mergedData.wholesalePricing.Tier2.discountPercentageTier2Wholesale,
+      mergedData.wholesalePricing.Tier2.wholesalePriceTier2,
+      
+      // Wholesale Tier 3 (1-20kg)
+      mergedData.wholesalePricing.Tier3.costPlusPricingMethodTier3Wholesale,
+      mergedData.wholesalePricing.Tier3.multiplierTier3Wholesale,
+      mergedData.wholesalePricing.Tier3.discountPercentageTier3Wholesale,
+      mergedData.wholesalePricing.Tier3.wholesalePriceTier3,
+      
+      mergedData.test,
+      // Note: We don't include the ID here as it shouldn't be updated
+    ];
+
+    console.log('Updated row data:', JSON.stringify(updatedRow, null, 2));
+
+    // Update the specific row
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `Prices Calculator!A${rowIndex + 1}:AN${rowIndex + 1}`, // Include all columns up to W; +1 because sheets are 1-indexed
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [updatedRow],
+      },
+    });
+
+    console.log(`Updated row ${rowIndex + 1} in Prices Calculator sheet`);
+
+    // Return the updated data
+    return {
+      id,
+      ...mergedData
+    };
+  } catch (error) {
+    console.error('Error updating product in Prices Calculator:', error);
+    throw error;
+  }
+}
+
 
 // Function to delete products from the Google Sheet
 async function deleteProductsFromPricesCalculator(tenantId, organizationId, ids) {
@@ -1208,7 +1559,7 @@ async function deleteProductsFromPricesCalculator(tenantId, organizationId, ids)
     // Get all data from the sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'Prices Calculator!A:W',
+      range: 'Prices Calculator!A:AN',
     });
     const rows = response.data.values;
     // After fetching the rows
